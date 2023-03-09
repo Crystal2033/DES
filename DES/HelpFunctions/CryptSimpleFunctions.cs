@@ -32,10 +32,8 @@ namespace DES.HelpFunctions
 
                 result[i / BITS_IN_BYTE] = (byte)(result[i / BITS_IN_BYTE] | (currBit << BITS_IN_BYTE - (i % BITS_IN_BYTE + 1)));
             }
-            bytes = result;
+            bytes = (byte[]) result.Clone();
             showBinaryView(bytes, "Result bytes");
-
-            
         }
     }
 }
