@@ -8,12 +8,14 @@ namespace DES.SubBytes
 {
     public abstract class AbstractSubBytes
     {
-        public virtual void subBytes(ref byte[] bytes, int blockSize, int groupSize, in List<byte[][]> sMatrix)
+        public virtual void subBytes(ref byte[] bytes, int blockSize, int groupSize, in List<byte[][]> sMatrix, int newBlockBitsSize)
         {
             int valueOfGroups = blockSize / groupSize;
             for(int k = 0; k < valueOfGroups; k++) {
                 (int i, int j) = getSBlockIndexes(in bytes, groupSize, k);
             }
+            byte[] result = new byte[(newBlockBitsSize * valueOfGroups)/ CryptConstants.BITS_IN_BYTE];
+
         }
         protected abstract (int i, int j) getSBlockIndexes(in byte[] bytes, int groupSize, int groupIndex);
 

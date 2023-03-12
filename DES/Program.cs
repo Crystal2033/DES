@@ -13,6 +13,6 @@ internal class Program
 
         byte[] mySwapBytes = new byte[6] { 214, 237, 198, 242, 255, 255 };
         AbstractSubBytes subBytes = new DesSybBytes();
-        subBytes.subBytes(ref mySwapBytes, 48, 6, new List<byte[][]>());
+        subBytes.subBytes(ref mySwapBytes, 48, 6, new List<byte[][]>(), 4);
     }
 }
