@@ -18,13 +18,13 @@ namespace DES.HelpFunctions
             }
             Console.WriteLine();
         }
-        private static void clearBytes(ref byte[] bytes){
+        public static void clearBytes(ref byte[] bytes){
             for(int i = 0; i < bytes.Length; i++) {
                 bytes[i] = 0;
             }
         }
 
-        public static void Permutation(ref byte[] bytes, in byte[] pBlock)
+        public static void permutation(ref byte[] bytes, in byte[] pBlock)
         {
             showBinaryView(bytes, "Start bytes view");
             byte[] result = new byte[bytes.Length];
