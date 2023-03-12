@@ -16,13 +16,13 @@ namespace DES.SubBytes
 
             for (int k = 0; k < valueOfGroups; k++) {
                 (int i, int j) = getSBlockIndexes(in bytes, groupSize, k);
-                createReducedData(ref reducedBytes, (i, j), newBlockBitsSize);
+                createReducedData(ref reducedBytes, (i, j), sMatrix, newBlockBitsSize);
             }
             bytes = (byte[])reducedBytes.Clone();
             CryptSimpleFunctions.clearBytes(ref reducedBytes);
         }
 
-        virtual protected void createReducedData(ref byte[] reducedBytes, (int, int) indexes, int sizeofBlock){
+        virtual protected void createReducedData(ref byte[] reducedBytes, (int, int) indexes, in List<byte[,]> sMatrix,  int sizeofBlock){
 
         }
         protected abstract (int i, int j) getSBlockIndexes(in byte[] bytes, int groupSize, int groupIndex);
