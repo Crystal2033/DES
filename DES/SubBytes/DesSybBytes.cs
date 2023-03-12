@@ -27,6 +27,19 @@ namespace DES.SubBytes
 
             //Getting J Index
             int j = 0;
+            for(int k = 0; k < groupSize - 2; k++){
+                int shiftingAfterStartBit = startBitIndex + 1 + k;
+
+                int middleBitForJ = bytes[startByteIndex + (shiftingAfterStartBit) / CryptConstants.BITS_IN_BYTE] >> 
+                    (CryptConstants.BITS_IN_BYTE - (shiftingAfterStartBit % CryptConstants.BITS_IN_BYTE) - 1) & 1;
+                j = j | middleBitForJ;
+
+                if(k != groupSize - 3) //Last iteration
+                {
+                    j <<= 1;
+                }
+                
+            }
 
             return (i, j);
         }
