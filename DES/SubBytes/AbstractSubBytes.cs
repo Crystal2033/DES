@@ -17,10 +17,6 @@ namespace DES.SubBytes
             for (int k = 0; k < valueOfGroups; k++) {
                 (int i, int j) = getSBlockIndexes(in bytes, groupSize, k);
                 createReducedData(ref reducedBytes, newBlockBitsSize, (i, j), sMatrix, k);
-                Console.WriteLine($"i={i}  j={j}  value[{k}][{i},{j}]={sMatrix[k][i, j]} ");
-                CryptSimpleFunctions.showBinaryView(reducedBytes, $"Iteration {k}");
-                Console.WriteLine();
-                Console.WriteLine();
             }
             bytes = (byte[])reducedBytes.Clone();
             CryptSimpleFunctions.clearBytes(ref reducedBytes);

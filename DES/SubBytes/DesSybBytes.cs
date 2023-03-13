@@ -11,7 +11,6 @@ namespace DES.SubBytes
     {
         protected override (int i, int j) getSBlockIndexes(in byte[] bytes, int groupSize, int groupIndex)
         {
-            CryptSimpleFunctions.showBinaryView(bytes, "Start view");
             //getting I index
             //Getting byte and shift bit for first bit in group
             int startByteIndex = (groupSize * groupIndex) / CryptConstants.BITS_IN_BYTE;
@@ -34,13 +33,10 @@ namespace DES.SubBytes
                     (CryptConstants.BITS_IN_BYTE - (shiftingAfterStartBit % CryptConstants.BITS_IN_BYTE) - 1) & 1;
                 j = j | middleBitForJ;
 
-                if(k != groupSize - 3) //Last iteration
-                {
+                if(k != groupSize - 3) { //Last iteration
                     j <<= 1;
-                }
-                
+                } 
             }
-
             return (i, j);
         }
     }
