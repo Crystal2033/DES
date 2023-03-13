@@ -11,7 +11,7 @@ internal class Program
 
         //CryptSimpleFunctions.permutation(ref myTextBytes, DESStandartBlocks.InvIPBlock);
 
-        byte[] mySwapBytes = new byte[6] { 214, 237, 198, 242, 255, 255 };
+        byte[] mySwapBytes = new byte[6] { 214, 237, 198, 242, 252, 255 };
         AbstractSubBytes subBytes = new DesSybBytes();
         subBytes.subBytes(ref mySwapBytes, 48, 6, in DESStandartBlocks.SMatrix, 4);
     }
