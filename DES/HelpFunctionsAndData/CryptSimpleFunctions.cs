@@ -27,7 +27,7 @@ namespace DES.HelpFunctions
         public static void permutation(ref byte[] bytes, in byte[] pBlock)
         {
             showBinaryView(bytes, "Start bytes view");
-            byte[] result = new byte[bytes.Length];
+            byte[] result = new byte[pBlock.Length / CryptConstants.BITS_IN_BYTE];
             for (byte i = 0; i < pBlock.Length; i++)
             {
                 byte currBlockIndex = (byte)((pBlock[i] - 1) / CryptConstants.BITS_IN_BYTE);
