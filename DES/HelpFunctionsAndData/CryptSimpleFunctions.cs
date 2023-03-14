@@ -9,7 +9,7 @@ namespace DES.HelpFunctions
     internal class CryptSimpleFunctions  
     {
         
-        public static void showBinaryView(in byte[] viewBytes, in string message) {
+        public static void showBinaryView(in byte[] viewBytes, in string message="") {
             Console.WriteLine(message);
             for (int i = 0; i < viewBytes.Length; i++)
             {
@@ -24,15 +24,25 @@ namespace DES.HelpFunctions
             }
         }
 
+        public static byte getBitFromPos(in byte myByte, byte index0FromLeft){
+            return (byte)(myByte >> (CryptConstants.BITS_IN_BYTE - index0FromLeft - 1) & 1);
+        }
+
+        public static void setBitOnPos(ref byte myByte, byte index0FromLeft, byte currBit){
+            byte mask = (byte)(1 << (CryptConstants.BITS_IN_BYTE - index0FromLeft - 1));
+             myByte = (byte)((myByte & ~mask) |
+                   ((currBit << (CryptConstants.BITS_IN_BYTE - index0FromLeft - 1)) & mask));
+        }
+
         public static void permutation(ref byte[] bytes, in byte[] pBlock)
         {
             showBinaryView(bytes, "Start bytes view");
             byte[] result = new byte[pBlock.Length / CryptConstants.BITS_IN_BYTE];
             for (byte i = 0; i < pBlock.Length; i++)
             {
-                byte currBlockIndex = (byte)((pBlock[i] - 1) / CryptConstants.BITS_IN_BYTE);
+                byte byteIndex = (byte)((pBlock[i] - 1) / CryptConstants.BITS_IN_BYTE);
 
-                byte currBit = (byte)((bytes[currBlockIndex] >> ((currBlockIndex + 1) * CryptConstants.BITS_IN_BYTE - pBlock[i]) & 1));
+                byte currBit = (byte)(bytes[byteIndex] >> ((byteIndex + 1) * CryptConstants.BITS_IN_BYTE - pBlock[i]) & 1);
 
                 result[i / CryptConstants.BITS_IN_BYTE] = (byte)(result[i / CryptConstants.BITS_IN_BYTE] | (currBit << CryptConstants.BITS_IN_BYTE - (i % CryptConstants.BITS_IN_BYTE + 1)));
             }

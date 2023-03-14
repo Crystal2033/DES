@@ -8,6 +8,6 @@ namespace DES.InterfacesDES
 {
     internal interface IKeyExpansion
     {
-        public List<byte[]> generateRoundKeys(in byte[] mainKey);
+        public List<byte[]> generateRoundKeys(in byte[] preparedKey);
     }
 }
