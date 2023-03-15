@@ -12,16 +12,23 @@ namespace DES.KeyManipulations
 {
     sealed public class DESKeysGenerator : RaundKeysGenerator
     {
+
+        public static readonly int keySize = 56;
         protected override List<byte[]> generateKeys(in byte[] preparedKey)
         {
             //main work
             List<byte[]> raundKeys = new();
             byte[] workingKey = (byte[])preparedKey.Clone();
             CryptSimpleFunctions.permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
-            CryptSimpleFunctions.sliceKeyOnTwoKeys(workingKey, 28, 28, out byte[] C0, out byte[] D0);
-            CryptSimpleFunctions.showBinaryView(workingKey, "StartKey");
-            CryptSimpleFunctions.showBinaryView(C0, "Left part");
-            CryptSimpleFunctions.showBinaryView(D0, "Right part");
+            CryptSimpleFunctions.sliceKeyOnTwoKeys(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
+
+            CryptSimpleFunctions.showBinaryView(C0, "C0");
+            byte[] res = CryptSimpleFunctions.cycleLeftShift(C0, keySize / 2, keySize / 4);
+            CryptSimpleFunctions.showBinaryView(res, "First shift res");
+            CryptSimpleFunctions.showBinaryView(CryptSimpleFunctions.cycleLeftShift(res, keySize / 2, keySize / 4), "Shifted2 value");
+            //for(int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++){
+
+            //}
             return raundKeys;
         }
 

@@ -59,10 +59,23 @@ namespace DES.HelpFunctions
            //showBinaryView(key, "Full key");
             setRangeOfBits(key, 0, 0, leftBlockSize, ref leftPart, 0, 0);
             //showBinaryView(leftPart, "Left part");
-            setRangeOfBits(key, leftBlockSize/CryptConstants.BITS_IN_BYTE, (byte)(leftBlockSize % CryptConstants.BITS_IN_BYTE),
+            setRangeOfBits(key, leftBlockSize / CryptConstants.BITS_IN_BYTE, (byte)(leftBlockSize % CryptConstants.BITS_IN_BYTE),
                 rightBlockSize, ref rightPart, 0, 0);
             //showBinaryView(rightPart, "Right part");
         }
+
+        public static byte[] cycleLeftShift(in byte[] bytes, int sizeInBits, int leftShiftValue)
+        {
+            leftShiftValue = leftShiftValue % sizeInBits;
+            byte[] result = new byte[bytes.Length];
+
+            setRangeOfBits(bytes, leftShiftValue / CryptConstants.BITS_IN_BYTE, (byte)(leftShiftValue % CryptConstants.BITS_IN_BYTE),
+                sizeInBits - leftShiftValue, ref result, 0, 0);
+
+            setRangeOfBits(bytes, 0, 0, leftShiftValue, ref result,
+                (sizeInBits - leftShiftValue) / CryptConstants.BITS_IN_BYTE, (byte)((sizeInBits - leftShiftValue) % CryptConstants.BITS_IN_BYTE));
+            return result;
+        } 
 
         public static byte[] concatTwoBitParts(in byte[] leftPart, int leftSize, in byte[] rightPart, int rightSize)
         {
