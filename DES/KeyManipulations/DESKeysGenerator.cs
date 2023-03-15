@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,9 +16,18 @@ namespace DES.KeyManipulations
         {
             //main work
             List<byte[]> raundKeys = new();
-
+            byte[] workingKey = (byte[])preparedKey.Clone();
+            CryptSimpleFunctions.permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
+            CryptSimpleFunctions.sliceKeyOnTwoKeys(workingKey, 28, 28, out byte[] C0, out byte[] D0);
+            CryptSimpleFunctions.showBinaryView(workingKey, "StartKey");
+            CryptSimpleFunctions.showBinaryView(C0, "Left part");
+            CryptSimpleFunctions.showBinaryView(D0, "Right part");
             return raundKeys;
         }
+
+        
+
+        
 
         protected override void mainKeyPreparing(in byte[] mainKey, out byte[] preparedKey)
         {
@@ -26,9 +36,8 @@ namespace DES.KeyManipulations
             int blockCounter = 0;
             int j = 0;
             for (int i = 0; i < mainKey.Length * CryptConstants.BITS_IN_BYTE; i++, j++){
-                
-                byte currBit = (byte)(mainKey[i / CryptConstants.BITS_IN_BYTE] >> 
-                    (CryptConstants.BITS_IN_BYTE - (i % CryptConstants.BITS_IN_BYTE) - 1) & 1);
+
+                byte currBit = CryptSimpleFunctions.getBitFromPos(mainKey[i / CryptConstants.BITS_IN_BYTE], (byte)(i % CryptConstants.BITS_IN_BYTE));
                 blockCounter++;
                 if (currBit == 1) {
                     bitsWithValueOneCounter++;
@@ -41,11 +50,13 @@ namespace DES.KeyManipulations
                 {
                     blockCounter = 0;
                     if(bitsWithValueOneCounter % 2 == 0){
-                        preparedKey[j / CryptConstants.BITS_IN_BYTE] |= (byte)1;
+                        //CryptSimpleFunctions.setBitOnPos(ref preparedKey[j / CryptConstants.BITS_IN_BYTE], (byte)(CryptConstants.BITS_IN_BYTE - 1), 1);
+                        preparedKey[j / CryptConstants.BITS_IN_BYTE] |= 1;
                     }
                     else
                     {
-                        preparedKey[j / CryptConstants.BITS_IN_BYTE] |= (byte)0;
+                        //CryptSimpleFunctions.setBitOnPos(ref preparedKey[j / CryptConstants.BITS_IN_BYTE], (byte)(CryptConstants.BITS_IN_BYTE - 1), 0);
+                        preparedKey[j / CryptConstants.BITS_IN_BYTE] |= 0;
                     }
                     j++;
                     bitsWithValueOneCounter = 0;

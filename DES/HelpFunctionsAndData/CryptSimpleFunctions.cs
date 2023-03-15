@@ -48,7 +48,43 @@ namespace DES.HelpFunctions
             }
             bytes = (byte[]) result.Clone();
             clearBytes(ref result);
-            showBinaryView(bytes, "Result bytes");
+            //showBinaryView(bytes, "Result bytes");
+        }
+
+
+        public static void sliceKeyOnTwoKeys(in byte[] key, int leftBlockSize, int rightBlockSize, out byte[] leftPart, out byte[] rightPart)
+        {
+            leftPart = new byte[(int)Math.Ceiling((double)leftBlockSize / (double)CryptConstants.BITS_IN_BYTE)];
+            rightPart = new byte[(int)Math.Ceiling((double)rightBlockSize / (double)CryptConstants.BITS_IN_BYTE)];
+           //showBinaryView(key, "Full key");
+            setRangeOfBits(key, 0, 0, leftBlockSize, ref leftPart, 0, 0);
+            //showBinaryView(leftPart, "Left part");
+            setRangeOfBits(key, leftBlockSize/CryptConstants.BITS_IN_BYTE, (byte)(leftBlockSize % CryptConstants.BITS_IN_BYTE),
+                rightBlockSize, ref rightPart, 0, 0);
+            //showBinaryView(rightPart, "Right part");
+        }
+
+        public static byte[] concatTwoBitParts(in byte[] leftPart, int leftSize, in byte[] rightPart, int rightSize)
+        {
+            return new byte[(int)Math.Ceiling(((double)(leftSize + rightSize)) / (double)(CryptConstants.BITS_IN_BYTE))];
+        }
+
+        /**
+         * copyFrom byte array from which copying bits
+         * startByteFrom copyFrom start BYTE to copy
+         * startBitFrom copyFrom start BIT to copy from 0 to 7 little-endian (0 1 2 3 4 5 6 7)
+         * valueOfBits how many bits need to insert
+         * copyTo resultArr
+         * startByteTo copyTo start BYTE to copy
+         * startBitTo copyTo start BIT to copy from 0 to 7 little-endian (0 1 2 3 4 5 6 7)
+         */
+        public static void setRangeOfBits(in byte[] copyFrom, int startByteFrom, byte startBitFrom, int valueOfBits, 
+                                         ref byte[] copyTo, int startByteTo, byte startBitTo){
+            for(int i = 0; i < valueOfBits; i++){
+                byte currBit = getBitFromPos(copyFrom[startByteFrom + ((i + startBitFrom) / CryptConstants.BITS_IN_BYTE)], (byte)((startBitFrom + (i % CryptConstants.BITS_IN_BYTE) ) % CryptConstants.BITS_IN_BYTE));
+                setBitOnPos(ref copyTo[startByteTo + ((i + startBitTo) / CryptConstants.BITS_IN_BYTE)],
+                    (byte)((startBitTo + (i % CryptConstants.BITS_IN_BYTE)) % CryptConstants.BITS_IN_BYTE), currBit);
+            }
         }
     }
 }
