@@ -79,7 +79,10 @@ namespace DES.HelpFunctions
 
         public static byte[] concatTwoBitParts(in byte[] leftPart, int leftSize, in byte[] rightPart, int rightSize)
         {
-            return new byte[(int)Math.Ceiling(((double)(leftSize + rightSize)) / (double)(CryptConstants.BITS_IN_BYTE))];
+            byte[] concatArr = new byte[(int)Math.Ceiling(((double)(leftSize + rightSize)) / (double)(CryptConstants.BITS_IN_BYTE))];
+            setRangeOfBits(leftPart, 0, 0, leftSize, ref concatArr, 0, 0);
+            setRangeOfBits(rightPart, 0, 0, rightSize, ref concatArr, leftSize / CryptConstants.BITS_IN_BYTE, (byte)(leftSize % CryptConstants.BITS_IN_BYTE));
+            return concatArr;
         }
 
         /**

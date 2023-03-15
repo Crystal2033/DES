@@ -27,19 +27,25 @@ namespace DES.KeyManipulations
             
             List<byte[]> DRaundKeys = new List<byte[]>();
             DRaundKeys.Add(D0);
-            CryptSimpleFunctions.showBinaryView(CRaundKeys[0], $"C{0}");
-            Console.WriteLine();
-            CryptSimpleFunctions.showBinaryView(CRaundKeys[0], $"D{0}");
-            Console.WriteLine();
-            for (int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++)
-            {
+
+            for (int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++){
                 CRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(CRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
                 //CryptSimpleFunctions.showBinaryView(CRaundKeys[i + 1], $"C{i + 1} with shift = {DESStandartBlocks.keyRaundLeftShifts[i]}");
                 //Console.WriteLine();
                 DRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
                 //CryptSimpleFunctions.showBinaryView(DRaundKeys[i + 1], $"D{i + 1} with shift = {DESStandartBlocks.keyRaundLeftShifts[i]}");
                 //Console.WriteLine();
+
+                byte[] CDKey = CryptSimpleFunctions.concatTwoBitParts(CRaundKeys[i + 1], keySize / 2, DRaundKeys[i + 1], keySize / 2);
+                //CryptSimpleFunctions.showBinaryView(CDKey, $"Total key on {i + 1}");
+                //Console.WriteLine();
+                CryptSimpleFunctions.permutation(ref CDKey, DESStandartBlocks.raundKeyCompressionBlock);
+                raundKeys.Add(CDKey);
+                //CryptSimpleFunctions.showBinaryView(CDKey, $"Compressed {i + 1} key");
+                //Console.WriteLine("---------------------------------------------------------------------------");
+                //Console.WriteLine();
             }
+
             return raundKeys;
         }
 
