@@ -22,13 +22,24 @@ namespace DES.KeyManipulations
             CryptSimpleFunctions.permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
             CryptSimpleFunctions.sliceKeyOnTwoKeys(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
 
-            CryptSimpleFunctions.showBinaryView(C0, "C0");
-            byte[] res = CryptSimpleFunctions.cycleLeftShift(C0, keySize / 2, keySize / 4);
-            CryptSimpleFunctions.showBinaryView(res, "First shift res");
-            CryptSimpleFunctions.showBinaryView(CryptSimpleFunctions.cycleLeftShift(res, keySize / 2, keySize / 4), "Shifted2 value");
-            //for(int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++){
-
-            //}
+            List<byte[]> CRaundKeys = new List<byte[]>();
+            CRaundKeys.Add(C0);
+            
+            List<byte[]> DRaundKeys = new List<byte[]>();
+            DRaundKeys.Add(D0);
+            CryptSimpleFunctions.showBinaryView(CRaundKeys[0], $"C{0}");
+            Console.WriteLine();
+            CryptSimpleFunctions.showBinaryView(CRaundKeys[0], $"D{0}");
+            Console.WriteLine();
+            for (int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++)
+            {
+                CRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(CRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                //CryptSimpleFunctions.showBinaryView(CRaundKeys[i + 1], $"C{i + 1} with shift = {DESStandartBlocks.keyRaundLeftShifts[i]}");
+                //Console.WriteLine();
+                DRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                //CryptSimpleFunctions.showBinaryView(DRaundKeys[i + 1], $"D{i + 1} with shift = {DESStandartBlocks.keyRaundLeftShifts[i]}");
+                //Console.WriteLine();
+            }
             return raundKeys;
         }
 
