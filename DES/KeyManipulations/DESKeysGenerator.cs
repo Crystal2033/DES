@@ -53,7 +53,7 @@ namespace DES.KeyManipulations
 
         
 
-        protected override void mainKeyPreparing(in byte[] mainKey, out byte[] preparedKey)
+        protected override void mainKeyPreparation(in byte[] mainKey, out byte[] preparedKey)
         {
             preparedKey = new byte[8];// DES specify
             int bitsWithValueOneCounter = 0;
@@ -87,7 +87,7 @@ namespace DES.KeyManipulations
                     continue;
                 }
             }
-            CryptSimpleFunctions.showBinaryView(preparedKey, "Expanded with test bits MainKey");
+            //CryptSimpleFunctions.showBinaryView(preparedKey, "Expanded with test bits MainKey");
         }
     }
 }

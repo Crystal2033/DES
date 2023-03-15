@@ -19,7 +19,7 @@ internal class Program
 
         RaundKeysGenerator dESKeysGenerator = new DESKeysGenerator();
         byte[] mainKey = new byte[7] { (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'A' };
-        CryptSimpleFunctions.showBinaryView(mainKey, "Input key:");
+        //CryptSimpleFunctions.showBinaryView(mainKey, "Input key:");
         var listOfKeys = dESKeysGenerator.generateRoundKeys(mainKey);
 
         //byte[] test = new byte[] { 6 };

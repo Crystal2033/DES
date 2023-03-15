@@ -13,7 +13,7 @@ namespace DES.HelpFunctions
             Console.WriteLine(message);
             for (int i = 0; i < viewBytes.Length; i++)
             {
-                Console.Write(Convert.ToString(viewBytes[i], 2).PadLeft(8, '0'));
+                Console.Write(Convert.ToString(viewBytes[i], 2).PadLeft(CryptConstants.BITS_IN_BYTE, '0'));
                 Console.Write(" ");
             }
             Console.WriteLine();
@@ -36,7 +36,7 @@ namespace DES.HelpFunctions
 
         public static void permutation(ref byte[] bytes, in byte[] pBlock)
         {
-            showBinaryView(bytes, "Start bytes view");
+            //showBinaryView(bytes, "Start bytes view");
             byte[] result = new byte[pBlock.Length / CryptConstants.BITS_IN_BYTE];
             for (byte i = 0; i < pBlock.Length; i++)
             {

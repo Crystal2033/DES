@@ -9,7 +9,7 @@ namespace DES.KeyManipulations
 {
     public abstract class RaundKeysGenerator : IKeyExpansion
     {
-        virtual protected void mainKeyPreparing(in byte[] mainKey, out byte[] preparedKey)
+        virtual protected void mainKeyPreparation(in byte[] mainKey, out byte[] preparedKey)
         {
             preparedKey = (byte[])mainKey.Clone();
         }
@@ -18,7 +18,7 @@ namespace DES.KeyManipulations
 
         public List<byte[]> generateRoundKeys(in byte[] mainKey)
         {
-            mainKeyPreparing(in mainKey, out byte[] preparedKey);
+            mainKeyPreparation(in mainKey, out byte[] preparedKey);
             return generateKeys(in preparedKey);
         }
     }
