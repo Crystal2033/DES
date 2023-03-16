@@ -1,4 +1,5 @@
 ﻿using DES.HelpFunctions;
+using DES.HelpFunctionsAndData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace DES.SubBytes
 {
     internal class DesSybBytes : AbstractSubBytes
     {
-        protected override (int i, int j) getSBlockIndexes(in byte[] bytes, int groupSize, int groupIndex)
+        protected override (int i, int j) getSBlockIndexes(in byte[] bytes, int groupSize, int groupIndex) //checked
         {
             //getting I index
             //Getting byte and shift bit for first bit in group

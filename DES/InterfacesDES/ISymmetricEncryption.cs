@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DES.InterfacesDES
 {
-    internal interface ISymmetricEncryption
+    public interface ISymmetricEncryption
     {
-        public byte[] encrypt(in byte[] bytes, in byte[] raundKey);
-        public byte[] decrypt(in byte[] bytes, in byte[] raundKey);
+        public byte[] encrypt(ref byte[] bytes);
+        public byte[] decrypt(ref byte[] bytes);
     }
 }

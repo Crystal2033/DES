@@ -1,4 +1,5 @@
 ﻿using DES.HelpFunctions;
+using DES.HelpFunctionsAndData;
 using DES.InterfacesDES;
 using System;
 using System.Collections;
@@ -14,7 +15,7 @@ namespace DES.KeyManipulations
     {
 
         public static readonly int keySize = 56;
-        protected override List<byte[]> generateKeys(in byte[] preparedKey)
+        protected override List<byte[]> generateKeys(in byte[] preparedKey)//checked
         {
             //main work
             List<byte[]> raundKeys = new();
@@ -30,20 +31,14 @@ namespace DES.KeyManipulations
 
             for (int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++){
                 CRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(CRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
-                //CryptSimpleFunctions.showBinaryView(CRaundKeys[i + 1], $"C{i + 1} with shift = {DESStandartBlocks.keyRaundLeftShifts[i]}");
-                //Console.WriteLine();
+
                 DRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
-                //CryptSimpleFunctions.showBinaryView(DRaundKeys[i + 1], $"D{i + 1} with shift = {DESStandartBlocks.keyRaundLeftShifts[i]}");
-                //Console.WriteLine();
 
                 byte[] CDKey = CryptSimpleFunctions.concatTwoBitParts(CRaundKeys[i + 1], keySize / 2, DRaundKeys[i + 1], keySize / 2);
-                //CryptSimpleFunctions.showBinaryView(CDKey, $"Total key on {i + 1}");
-                //Console.WriteLine();
+
                 CryptSimpleFunctions.permutation(ref CDKey, DESStandartBlocks.raundKeyCompressionBlock);
                 raundKeys.Add(CDKey);
-                //CryptSimpleFunctions.showBinaryView(CDKey, $"Compressed {i + 1} key");
-                //Console.WriteLine("---------------------------------------------------------------------------");
-                //Console.WriteLine();
+
             }
 
             return raundKeys;
@@ -53,7 +48,7 @@ namespace DES.KeyManipulations
 
         
 
-        protected override void mainKeyPreparation(in byte[] mainKey, out byte[] preparedKey)
+        protected override void mainKeyPreparation(in byte[] mainKey, out byte[] preparedKey) //checked
         {
             preparedKey = new byte[8];// DES specify
             int bitsWithValueOneCounter = 0;

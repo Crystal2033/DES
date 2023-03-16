@@ -13,19 +13,14 @@ namespace DES.FeistelImplementation
 
         private List<byte[]> _raundKeys;
         private readonly int _valueOfRaunds = 16;
-
-        public List<byte[]> RaundKeys
-        {
-            get { return _raundKeys; }
-        }
-
+        private readonly byte[] _mainKey;
         public byte[] MainKey {
             get{
                 return MainKey;
             } 
             init{
-                MainKey = value;
-                _raundKeys = KeyExpander.generateRoundKeys(MainKey);
+                _mainKey = value;
+                _raundKeys = KeyExpander.generateRoundKeys(_mainKey);
             } }
 
         public IKeyExpansion KeyExpander { get; init; }
@@ -35,8 +30,12 @@ namespace DES.FeistelImplementation
             FeistelFunction = feistelFunction;
         }
 
-        public byte[] execute(in byte[] partOfText, int sizeInBits){
-            CryptSimpleFunctions.sliceArrayOnTwoArrays(partOfText, sizeInBits, sizeInBits, out byte[] leftPart, out byte[] rightPart);
+        public void reverseRaundKeys(){
+            _raundKeys.Reverse();
+        }
+
+        public byte[] execute(in byte[] partOfText, int sizeInBits){ //not checked
+            CryptSimpleFunctions.sliceArrayOnTwoArrays(partOfText, sizeInBits / 2, sizeInBits / 2, out byte[] leftPart, out byte[] rightPart);
             byte[] nextLeftPart;
             byte[] nextRightPart;
 
@@ -51,7 +50,7 @@ namespace DES.FeistelImplementation
             nextLeftPart = CryptSimpleFunctions.xorByteArrays(leftPart, FeistelFunction.feistelFunction(ref rightPart, _raundKeys[_valueOfRaunds-1]));
             nextRightPart = rightPart;
 
-            return CryptSimpleFunctions.concatTwoBitParts(nextLeftPart, 32, nextRightPart, 32);
+            return CryptSimpleFunctions.concatTwoBitParts(nextLeftPart, sizeInBits / 2, nextRightPart, sizeInBits / 2);
         }
 
     }
