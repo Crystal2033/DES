@@ -26,7 +26,7 @@ internal class Program
         byte[] partOfText = new byte[4] { (byte)'1', (byte)'2', (byte)'3', (byte)'4'};
         byte[] raundKey = new byte[6] { 45, 74, 5, 165, 69, 41 };
         DESFeistelFunction dESFeistelFunction = new DESFeistelFunction();
-        byte[] resOfFeistel = dESFeistelFunction.feistelTransform(ref partOfText, raundKey);
+        byte[] resOfFeistel = dESFeistelFunction.feistelFunction(ref partOfText, raundKey);
 
 
         //byte[] test = new byte[] { 6 };

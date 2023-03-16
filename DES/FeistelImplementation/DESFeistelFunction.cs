@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace DES.FeistelImplementation
 {
-    internal class DESFeistelFunction : IFeistelNetwork
+    internal class DESFeistelFunction : IFeistelFunction
     {
         /**
          * bytes is 32 bits value
          * raundKey is 48 bits value
          * result is 32 bits value Feistel function result
          */
-        public byte[] feistelTransform(ref byte[] bytes, in byte[] raundKey)
+        public byte[] feistelFunction(ref byte[] bytes, in byte[] raundKey)
         {
             byte[] result = new byte[bytes.Length];
 

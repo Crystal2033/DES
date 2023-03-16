@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DES.InterfacesDES
 {
-    internal interface IKeyExpansion
+    public interface IKeyExpansion
     {
         public List<byte[]> generateRoundKeys(in byte[] preparedKey);
     }

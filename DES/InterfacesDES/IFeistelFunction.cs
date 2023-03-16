@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DES.InterfacesDES
 {
-    internal interface IFeistelNetwork
+    public interface IFeistelFunction
     {
-        public byte[] feistelTransform(ref byte[] bytes, in byte[] raundKey);
+        public byte[] feistelFunction(ref byte[] bytes, in byte[] raundKey);
     }
 }

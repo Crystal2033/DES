@@ -20,7 +20,7 @@ namespace DES.KeyManipulations
             List<byte[]> raundKeys = new();
             byte[] workingKey = (byte[])preparedKey.Clone();
             CryptSimpleFunctions.permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
-            CryptSimpleFunctions.sliceKeyOnTwoKeys(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
+            CryptSimpleFunctions.sliceArrayOnTwoArrays(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
 
             List<byte[]> CRaundKeys = new List<byte[]>();
             CRaundKeys.Add(C0);

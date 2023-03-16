@@ -52,14 +52,14 @@ namespace DES.HelpFunctions
         }
 
 
-        public static void sliceKeyOnTwoKeys(in byte[] key, int leftBlockSize, int rightBlockSize, out byte[] leftPart, out byte[] rightPart)
+        public static void sliceArrayOnTwoArrays(in byte[] startBytes, int leftBlockSize, int rightBlockSize, out byte[] leftPart, out byte[] rightPart)
         {
             leftPart = new byte[(int)Math.Ceiling((double)leftBlockSize / (double)CryptConstants.BITS_IN_BYTE)];
             rightPart = new byte[(int)Math.Ceiling((double)rightBlockSize / (double)CryptConstants.BITS_IN_BYTE)];
-           //showBinaryView(key, "Full key");
-            setRangeOfBits(key, 0, 0, leftBlockSize, ref leftPart, 0, 0);
+           //showBinaryView(startBytes, "Full startBytes");
+            setRangeOfBits(startBytes, 0, 0, leftBlockSize, ref leftPart, 0, 0);
             //showBinaryView(leftPart, "Left part");
-            setRangeOfBits(key, leftBlockSize / CryptConstants.BITS_IN_BYTE, (byte)(leftBlockSize % CryptConstants.BITS_IN_BYTE),
+            setRangeOfBits(startBytes, leftBlockSize / CryptConstants.BITS_IN_BYTE, (byte)(leftBlockSize % CryptConstants.BITS_IN_BYTE),
                 rightBlockSize, ref rightPart, 0, 0);
             //showBinaryView(rightPart, "Right part");
         }
@@ -102,7 +102,7 @@ namespace DES.HelpFunctions
          * copyFrom byte array from which copying bits
          * startByteFrom copyFrom start BYTE to copy
          * startBitFrom copyFrom start BIT to copy from 0 to 7 little-endian (0 1 2 3 4 5 6 7)
-         * valueOfBits how many bits need to insert
+         * valueOfBits how many bits need to insert. Iterating [0;valueOfBits)
          * copyTo resultArr
          * startByteTo copyTo start BYTE to copy
          * startBitTo copyTo start BIT to copy from 0 to 7 little-endian (0 1 2 3 4 5 6 7)
