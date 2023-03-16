@@ -77,6 +77,19 @@ namespace DES.HelpFunctions
             return result;
         } 
 
+
+        public static byte[] xorByteArrays(in byte[] first, in byte[] second)
+        {
+            if(first.Length != second.Length)
+            {
+                throw new ArgumentException("Two arrays are not compatible for XOR operation");
+            }
+            byte[] result = new byte[first.Length];
+            for(int i =0; i < first.Length; i++){
+                result[i] = (byte)(first[i] ^ second[i]);
+            }
+            return result;
+        }
         public static byte[] concatTwoBitParts(in byte[] leftPart, int leftSize, in byte[] rightPart, int rightSize)
         {
             byte[] concatArr = new byte[(int)Math.Ceiling(((double)(leftSize + rightSize)) / (double)(CryptConstants.BITS_IN_BYTE))];

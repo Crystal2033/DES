@@ -1,4 +1,5 @@
-﻿using DES.HelpFunctions;
+﻿using DES.FeistelImplementation;
+using DES.HelpFunctions;
 using DES.KeyManipulations;
 using DES.SubBytes;
 
@@ -17,10 +18,16 @@ internal class Program
         //subBytes.subBytes(ref mySwapBytes, 48, 6, in DESStandartBlocks.SMatrix, 4);
         //CryptSimpleFunctions.showBinaryView(mySwapBytes, $"Result");
 
-        RaundKeysGenerator dESKeysGenerator = new DESKeysGenerator();
-        byte[] mainKey = new byte[7] { (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'A' };
-        //CryptSimpleFunctions.showBinaryView(mainKey, "Input key:");
-        var listOfKeys = dESKeysGenerator.generateRoundKeys(mainKey);
+        //RaundKeysGenerator dESKeysGenerator = new DESKeysGenerator();
+        //byte[] mainKey = new byte[7] { (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'A' };
+        ////CryptSimpleFunctions.showBinaryView(mainKey, "Input key:");
+        //var listOfKeys = dESKeysGenerator.generateRoundKeys(mainKey);
+
+        byte[] partOfText = new byte[4] { (byte)'1', (byte)'2', (byte)'3', (byte)'4'};
+        byte[] raundKey = new byte[6] { 45, 74, 5, 165, 69, 41 };
+        DESFeistelFunction dESFeistelFunction = new DESFeistelFunction();
+        byte[] resOfFeistel = dESFeistelFunction.feistelTransform(partOfText, raundKey);
+
 
         //byte[] test = new byte[] { 6 };
         //CryptSimpleFunctions.showBinaryView(test);

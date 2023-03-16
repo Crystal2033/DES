@@ -8,6 +8,6 @@ namespace DES.InterfacesDES
 {
     internal interface IFeistelNetwork
     {
-        public byte[] feistelTransform(in byte[] bytes, in byte raundKey);
+        public byte[] feistelTransform(byte[] bytes, in byte[] raundKey);
     }
 }
