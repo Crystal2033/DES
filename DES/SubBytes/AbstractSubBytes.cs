@@ -9,14 +9,18 @@ namespace DES.SubBytes
 {
     public abstract class AbstractSubBytes
     {
-        public virtual void subBytes(ref byte[] bytes, int blockSize, int groupSize, in List<byte[,]> sMatrix, int newBlockBitsSize)
+        /*blockSizeInBits for DES is 48 bits (6 * 8)
+         * groupSizeInBits for DES if 6
+         * newGroupBitsSize for DES is 4
+         */
+        public virtual void subBytes(ref byte[] bytes, int blockSizeInBits, int groupSizeInBits, in List<byte[,]> sMatrix, int newGroupBitsSize)
         {
-            int valueOfGroups = blockSize / groupSize;
-            byte[] reducedBytes = new byte[(newBlockBitsSize * valueOfGroups) / CryptConstants.BITS_IN_BYTE];
+            int valueOfGroups = blockSizeInBits / groupSizeInBits;
+            byte[] reducedBytes = new byte[(newGroupBitsSize * valueOfGroups) / CryptConstants.BITS_IN_BYTE];
 
             for (int k = 0; k < valueOfGroups; k++) {
-                (int i, int j) = getSBlockIndexes(in bytes, groupSize, k);
-                createReducedData(ref reducedBytes, newBlockBitsSize, (i, j), sMatrix, k);
+                (int i, int j) = getSBlockIndexes(in bytes, groupSizeInBits, k);
+                createReducedData(ref reducedBytes, newGroupBitsSize, (i, j), sMatrix, k);
             }
             bytes = (byte[])reducedBytes.Clone();
             CryptSimpleFunctions.clearBytes(ref reducedBytes);
