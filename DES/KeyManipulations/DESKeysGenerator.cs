@@ -17,11 +17,13 @@ namespace DES.KeyManipulations
         public static readonly int keySize = 56;
         protected override List<byte[]> GenerateKeys(in byte[] preparedKey)//checked
         {
-            //main work
             List<byte[]> raundKeys = new();
             byte[] workingKey = (byte[])preparedKey.Clone();
             CryptSimpleFunctions.Permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
+            CryptSimpleFunctions.ShowBinaryView(workingKey, "After permutation");
             CryptSimpleFunctions.SliceArrayOnTwoArrays(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
+            CryptSimpleFunctions.ShowBinaryView(C0, "After slice C0");
+            CryptSimpleFunctions.ShowBinaryView(D0, "After slice D0");
 
             List<byte[]> CRaundKeys = new List<byte[]>();
             CRaundKeys.Add(C0);
@@ -31,12 +33,16 @@ namespace DES.KeyManipulations
 
             for (int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++){
                 CRaundKeys.Add(CryptSimpleFunctions.CycleLeftShift(CRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                CryptSimpleFunctions.ShowBinaryView(CRaundKeys[i + 1], $"Shifted C{i} key on {DESStandartBlocks.keyRaundLeftShifts[i]}");
 
                 DRaundKeys.Add(CryptSimpleFunctions.CycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                CryptSimpleFunctions.ShowBinaryView(DRaundKeys[i + 1], $"Shifted D{i} key on {DESStandartBlocks.keyRaundLeftShifts[i]}");
 
                 byte[] CDKey = CryptSimpleFunctions.ConcatTwoBitParts(CRaundKeys[i + 1], keySize / 2, DRaundKeys[i + 1], keySize / 2);
+                CryptSimpleFunctions.ShowBinaryView(CDKey, $"CDKey{i}");
 
                 CryptSimpleFunctions.Permutation(ref CDKey, DESStandartBlocks.raundKeyCompressionBlock);
+                CryptSimpleFunctions.ShowBinaryView(CDKey, $"After permutation CDKey{i}");
                 raundKeys.Add(CDKey);
 
             }

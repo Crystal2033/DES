@@ -50,6 +50,7 @@ internal class Program
 
         byte[] myTextBytes = new byte[8] { 117, 85, 93, 53, 78, 146, 200, 190 };
         CryptSimpleFunctions.ShowBinaryView(myTextBytes, "Plain text");
+        CryptSimpleFunctions.ShowBinaryView(mainKey, "Key");
         byte[] cipher = desImpl.Encrypt(ref myTextBytes);
         CryptSimpleFunctions.ShowBinaryView(cipher, "Cypher");
         byte[] plainText = desImpl.Decrypt(ref cipher);

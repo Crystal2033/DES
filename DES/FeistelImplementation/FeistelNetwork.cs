@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace DES.FeistelImplementation
 {
     public class FeistelNetwork
@@ -36,24 +37,33 @@ namespace DES.FeistelImplementation
 
         public byte[] Execute(in byte[] partOfText, int sizeInBits, CryptStatus cryptStatus)
         { //not checked
+            CryptSimpleFunctions.ShowBinaryView(partOfText, "Before slice");
             CryptSimpleFunctions.SliceArrayOnTwoArrays(partOfText, sizeInBits / 2, sizeInBits / 2, out byte[] leftPart, out byte[] rightPart);
-            byte[] nextLeftPart;
-            byte[] nextRightPart;
+            CryptSimpleFunctions.ShowBinaryView(leftPart, "L0");
+            CryptSimpleFunctions.ShowBinaryView(rightPart, "R0");
+            byte[] nextLeftPart = default;
+            byte[] nextRightPart = default;
 
-            for(int i = 0; i < _valueOfRaunds - 1; i++){
+            for(int i = 0; i < _valueOfRaunds; i++){
                 nextLeftPart = (byte[])rightPart.Clone();
+                CryptSimpleFunctions.ShowBinaryView(nextLeftPart, $"L{i + 1}");
                 nextRightPart = CryptSimpleFunctions.XorByteArrays(leftPart, 
                     FeistelFunction.FeistelFunction(ref rightPart, _raundKeys[(cryptStatus == CryptStatus.ENCRYPT) ? i : _valueOfRaunds - i -1]));
+                CryptSimpleFunctions.ShowBinaryView(nextRightPart, $"R{i + 1}");
 
                 leftPart = nextLeftPart;
                 rightPart = nextRightPart;
+                CryptSimpleFunctions.ShowBinaryView(leftPart, $"L{i}");
+                CryptSimpleFunctions.ShowBinaryView(rightPart, $"R{i}");
             }
 
-            nextLeftPart = CryptSimpleFunctions.XorByteArrays(leftPart, 
-                FeistelFunction.FeistelFunction(ref rightPart, _raundKeys[(cryptStatus == CryptStatus.ENCRYPT) ? _valueOfRaunds - 1 : 0]));
-            nextRightPart = rightPart;
+            //nextLeftPart = CryptSimpleFunctions.XorByteArrays(leftPart, 
+            //    FeistelFunction.FeistelFunction(ref rightPart, _raundKeys[(cryptStatus == CryptStatus.ENCRYPT) ? _valueOfRaunds - 1 : 0]));
+            //nextRightPart = rightPart;
+            //CryptSimpleFunctions.ShowBinaryView(nextLeftPart, $"Last left part");
+            //CryptSimpleFunctions.ShowBinaryView(nextRightPart, $"Last right part");
 
-            return CryptSimpleFunctions.ConcatTwoBitParts(nextLeftPart, sizeInBits / 2, nextRightPart, sizeInBits / 2);
+            return CryptSimpleFunctions.ConcatTwoBitParts(rightPart, sizeInBits / 2, leftPart, sizeInBits / 2);
         }
 
     }

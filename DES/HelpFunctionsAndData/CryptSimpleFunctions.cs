@@ -11,6 +11,7 @@ namespace DES.HelpFunctions
     {
         
         public static void ShowBinaryView(in byte[] viewBytes, in string message="") {
+            Console.WriteLine("---------------------------------------------");
             Console.WriteLine(message);
             for (int i = 0; i < viewBytes.Length; i++)
             {
@@ -18,6 +19,7 @@ namespace DES.HelpFunctions
                 Console.Write(" ");
             }
             Console.WriteLine();
+            Console.WriteLine("---------------------------------------------");
         }
         public static void ClearBytes(ref byte[] bytes){
             for(int i = 0; i < bytes.Length; i++) {
