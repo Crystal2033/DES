@@ -19,9 +19,7 @@ namespace DES.KeyManipulations
 
         public List<byte[]> GenerateRoundKeys(in byte[] mainKey)
         {
-            CryptSimpleFunctions.ShowBinaryView(mainKey, "Before prepare");
             MainKeyPreparation(in mainKey, out byte[] preparedKey);
-            CryptSimpleFunctions.ShowBinaryView(preparedKey, "Prepared key");
             return GenerateKeys(in preparedKey);
         }
     }
