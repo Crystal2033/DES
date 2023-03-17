@@ -10,6 +10,10 @@ namespace DES.FeistelImplementation
 {
     public class FeistelNetwork
     {
+        public enum CryptStatus
+        {
+            ENCRYPT, DECRYPT
+        };
 
         private List<byte[]> _raundKeys;
         private readonly int _valueOfRaunds = 16;
@@ -20,7 +24,7 @@ namespace DES.FeistelImplementation
             } 
             init{
                 _mainKey = value;
-                _raundKeys = KeyExpander.generateRoundKeys(_mainKey);
+                _raundKeys = KeyExpander.GenerateRoundKeys(_mainKey);
             } }
 
         public IKeyExpansion KeyExpander { get; init; }
@@ -30,27 +34,26 @@ namespace DES.FeistelImplementation
             FeistelFunction = feistelFunction;
         }
 
-        public void reverseRaundKeys(){
-            _raundKeys.Reverse();
-        }
-
-        public byte[] execute(in byte[] partOfText, int sizeInBits){ //not checked
-            CryptSimpleFunctions.sliceArrayOnTwoArrays(partOfText, sizeInBits / 2, sizeInBits / 2, out byte[] leftPart, out byte[] rightPart);
+        public byte[] Execute(in byte[] partOfText, int sizeInBits, CryptStatus cryptStatus)
+        { //not checked
+            CryptSimpleFunctions.SliceArrayOnTwoArrays(partOfText, sizeInBits / 2, sizeInBits / 2, out byte[] leftPart, out byte[] rightPart);
             byte[] nextLeftPart;
             byte[] nextRightPart;
 
             for(int i = 0; i < _valueOfRaunds - 1; i++){
                 nextLeftPart = (byte[])rightPart.Clone();
-                nextRightPart = CryptSimpleFunctions.xorByteArrays(leftPart, FeistelFunction.feistelFunction(ref rightPart, _raundKeys[i]));
+                nextRightPart = CryptSimpleFunctions.XorByteArrays(leftPart, 
+                    FeistelFunction.FeistelFunction(ref rightPart, _raundKeys[(cryptStatus == CryptStatus.ENCRYPT) ? i : _valueOfRaunds - i -1]));
 
                 leftPart = nextLeftPart;
                 rightPart = nextRightPart;
             }
 
-            nextLeftPart = CryptSimpleFunctions.xorByteArrays(leftPart, FeistelFunction.feistelFunction(ref rightPart, _raundKeys[_valueOfRaunds-1]));
+            nextLeftPart = CryptSimpleFunctions.XorByteArrays(leftPart, 
+                FeistelFunction.FeistelFunction(ref rightPart, _raundKeys[(cryptStatus == CryptStatus.ENCRYPT) ? _valueOfRaunds - 1 : 0]));
             nextRightPart = rightPart;
 
-            return CryptSimpleFunctions.concatTwoBitParts(nextLeftPart, sizeInBits / 2, nextRightPart, sizeInBits / 2);
+            return CryptSimpleFunctions.ConcatTwoBitParts(nextLeftPart, sizeInBits / 2, nextRightPart, sizeInBits / 2);
         }
 
     }

@@ -15,13 +15,13 @@ namespace DES.KeyManipulations
     {
 
         public static readonly int keySize = 56;
-        protected override List<byte[]> generateKeys(in byte[] preparedKey)//checked
+        protected override List<byte[]> GenerateKeys(in byte[] preparedKey)//checked
         {
             //main work
             List<byte[]> raundKeys = new();
             byte[] workingKey = (byte[])preparedKey.Clone();
-            CryptSimpleFunctions.permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
-            CryptSimpleFunctions.sliceArrayOnTwoArrays(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
+            CryptSimpleFunctions.Permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
+            CryptSimpleFunctions.SliceArrayOnTwoArrays(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
 
             List<byte[]> CRaundKeys = new List<byte[]>();
             CRaundKeys.Add(C0);
@@ -30,13 +30,13 @@ namespace DES.KeyManipulations
             DRaundKeys.Add(D0);
 
             for (int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++){
-                CRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(CRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                CRaundKeys.Add(CryptSimpleFunctions.CycleLeftShift(CRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
 
-                DRaundKeys.Add(CryptSimpleFunctions.cycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                DRaundKeys.Add(CryptSimpleFunctions.CycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
 
-                byte[] CDKey = CryptSimpleFunctions.concatTwoBitParts(CRaundKeys[i + 1], keySize / 2, DRaundKeys[i + 1], keySize / 2);
+                byte[] CDKey = CryptSimpleFunctions.ConcatTwoBitParts(CRaundKeys[i + 1], keySize / 2, DRaundKeys[i + 1], keySize / 2);
 
-                CryptSimpleFunctions.permutation(ref CDKey, DESStandartBlocks.raundKeyCompressionBlock);
+                CryptSimpleFunctions.Permutation(ref CDKey, DESStandartBlocks.raundKeyCompressionBlock);
                 raundKeys.Add(CDKey);
 
             }
@@ -48,7 +48,7 @@ namespace DES.KeyManipulations
 
         
 
-        protected override void mainKeyPreparation(in byte[] mainKey, out byte[] preparedKey) //checked
+        protected override void MainKeyPreparation(in byte[] mainKey, out byte[] preparedKey) //checked
         {
             preparedKey = new byte[8];// DES specify
             int bitsWithValueOneCounter = 0;
@@ -56,7 +56,7 @@ namespace DES.KeyManipulations
             int j = 0;
             for (int i = 0; i < mainKey.Length * CryptConstants.BITS_IN_BYTE; i++, j++){
 
-                byte currBit = CryptSimpleFunctions.getBitFromPos(mainKey[i / CryptConstants.BITS_IN_BYTE], (byte)(i % CryptConstants.BITS_IN_BYTE));
+                byte currBit = CryptSimpleFunctions.GetBitFromPos(mainKey[i / CryptConstants.BITS_IN_BYTE], (byte)(i % CryptConstants.BITS_IN_BYTE));
                 blockCounter++;
                 if (currBit == 1) {
                     bitsWithValueOneCounter++;
@@ -69,12 +69,12 @@ namespace DES.KeyManipulations
                 {
                     blockCounter = 0;
                     if(bitsWithValueOneCounter % 2 == 0){
-                        //CryptSimpleFunctions.setBitOnPos(ref preparedKey[j / CryptConstants.BITS_IN_BYTE], (byte)(CryptConstants.BITS_IN_BYTE - 1), 1);
+                        //CryptSimpleFunctions.SetBitOnPos(ref preparedKey[j / CryptConstants.BITS_IN_BYTE], (byte)(CryptConstants.BITS_IN_BYTE - 1), 1);
                         preparedKey[j / CryptConstants.BITS_IN_BYTE] |= 1;
                     }
                     else
                     {
-                        //CryptSimpleFunctions.setBitOnPos(ref preparedKey[j / CryptConstants.BITS_IN_BYTE], (byte)(CryptConstants.BITS_IN_BYTE - 1), 0);
+                        //CryptSimpleFunctions.SetBitOnPos(ref preparedKey[j / CryptConstants.BITS_IN_BYTE], (byte)(CryptConstants.BITS_IN_BYTE - 1), 0);
                         preparedKey[j / CryptConstants.BITS_IN_BYTE] |= 0;
                     }
                     j++;
@@ -82,7 +82,7 @@ namespace DES.KeyManipulations
                     continue;
                 }
             }
-            //CryptSimpleFunctions.showBinaryView(preparedKey, "Expanded with test bits MainKey");
+            //CryptSimpleFunctions.ShowBinaryView(preparedKey, "Expanded with test bits MainKey");
         }
     }
 }

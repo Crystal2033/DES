@@ -8,6 +8,6 @@ namespace DES.InterfacesDES
 {
     public interface IFeistelFunction
     {
-        public byte[] feistelFunction(ref byte[] bytes, in byte[] raundKey);
+        public byte[] FeistelFunction(ref byte[] bytes, in byte[] raundKey);
     }
 }

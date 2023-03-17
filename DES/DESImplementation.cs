@@ -17,22 +17,22 @@ namespace DES
             _feistel = feistel;
         }
 
-        public byte[] encrypt(ref byte[] bytes)
+        private byte[] MakeCryptOperation(ref byte[] bytes, FeistelNetwork.CryptStatus cryptStatus)
         {
-            CryptSimpleFunctions.permutation(ref bytes, DESStandartBlocks.IPBlock);
-            byte[] cipher = _feistel.execute(in bytes, 64);
-            CryptSimpleFunctions.permutation(ref cipher, DESStandartBlocks.InvIPBlock);
-            return cipher;
+            CryptSimpleFunctions.Permutation(ref bytes, DESStandartBlocks.IPBlock);
+            byte[] value = _feistel.Execute(in bytes, 64, cryptStatus);
+            CryptSimpleFunctions.Permutation(ref value, DESStandartBlocks.InvIPBlock);
+            return value;
+        }
+        public byte[] Encrypt(ref byte[] bytes)
+        {
+            return MakeCryptOperation(ref bytes, FeistelNetwork.CryptStatus.ENCRYPT);
         }
 
 
-        public byte[] decrypt(ref byte[] bytes)
-        { 
-            CryptSimpleFunctions.permutation(ref bytes, DESStandartBlocks.IPBlock);
-            _feistel.reverseRaundKeys();
-            byte[] plainText = _feistel.execute(in bytes, 64);
-            CryptSimpleFunctions.permutation(ref plainText, DESStandartBlocks.InvIPBlock);
-            return plainText;
+        public byte[] Decrypt(ref byte[] bytes)
+        {
+            return MakeCryptOperation(ref bytes, FeistelNetwork.CryptStatus.DECRYPT);
         }
 
         

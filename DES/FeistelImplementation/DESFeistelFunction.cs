@@ -17,14 +17,14 @@ namespace DES.FeistelImplementation
          * raundKey is 48 bits value
          * result is 32 bits value Feistel function result
          */
-        public byte[] feistelFunction(ref byte[] bytes, in byte[] raundKey) //checked
+        public byte[] FeistelFunction(ref byte[] bytes, in byte[] raundKey) //checked
         {
             byte[] result;
 
-            CryptSimpleFunctions.permutation(ref bytes, DESStandartBlocks.textExpansionBlockPermutation);
+            CryptSimpleFunctions.Permutation(ref bytes, DESStandartBlocks.textExpansionBlockPermutation);
 
             try{
-                result = CryptSimpleFunctions.xorByteArrays(bytes, raundKey);
+                result = CryptSimpleFunctions.XorByteArrays(bytes, raundKey);
             }
             catch(ArgumentException exc){
                 Console.WriteLine(exc.Message);
@@ -33,9 +33,9 @@ namespace DES.FeistelImplementation
             
             AbstractSubBytes desSubBytes = new DesSybBytes();
 
-            desSubBytes.subBytes(ref result, 48, 6, DESStandartBlocks.SMatrix, 4);
+            desSubBytes.SubBytes(ref result, 48, 6, DESStandartBlocks.SMatrix, 4);
 
-            CryptSimpleFunctions.permutation(ref result, DESStandartBlocks.finalFeistelPermutationDES);
+            CryptSimpleFunctions.Permutation(ref result, DESStandartBlocks.finalFeistelPermutationDES);
 
             return result;
         }

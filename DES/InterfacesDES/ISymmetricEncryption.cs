@@ -8,7 +8,7 @@ namespace DES.InterfacesDES
 {
     public interface ISymmetricEncryption
     {
-        public byte[] encrypt(ref byte[] bytes);
-        public byte[] decrypt(ref byte[] bytes);
+        public byte[] Encrypt(ref byte[] bytes);
+        public byte[] Decrypt(ref byte[] bytes);
     }
 }
