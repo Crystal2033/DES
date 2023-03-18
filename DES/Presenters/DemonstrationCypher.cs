@@ -1,16 +1,20 @@
 ﻿using DES.HelpFunctions;
 using DES.HelpFunctionsAndData;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DES.Presenters
 {
     
-    internal class DemonstrationCypher
+    internal sealed class DemonstrationCypher
     {
+        private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly DESImplementation DESImplementation;
         public DemonstrationCypher(DESImplementation dESImplementation)
         {
@@ -24,30 +28,37 @@ namespace DES.Presenters
 
         public void encrypt(string userFile, string encryptTo)
         {
-            using (var inStream = File.Open(userFile, FileMode.OpenOrCreate))
-            using (var outSream = File.Open(encryptTo, FileMode.OpenOrCreate))
+            try
             {
-
-                using (BinaryReader reader = new BinaryReader(inStream, Encoding.UTF8))
-                using (BinaryWriter writer = new BinaryWriter(outSream, Encoding.UTF8))
+                using (var inStream = File.Open(userFile, FileMode.Open))
+                using (var outSream = File.Open(encryptTo, FileMode.OpenOrCreate))
                 {
-                    byte[] textBlock = new byte[2048];
-                    byte[] currentPart = new byte[8];
-                    int writtenBytes;
-                    while ((writtenBytes = reader.Read(textBlock, 0, textBlock.Length)) != 0)
+
+                    using (BinaryReader reader = new BinaryReader(inStream, Encoding.UTF8))
+                    using (BinaryWriter writer = new BinaryWriter(outSream, Encoding.UTF8))
                     {
-                        int textPartsCounter = 0;
-                        while (textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES < writtenBytes)
+                        byte[] textBlock = new byte[2048];
+                        byte[] currentPart = new byte[8];
+                        int writtenBytes;
+                        while ((writtenBytes = reader.Read(textBlock, 0, textBlock.Length)) != 0)
                         {
-                            CryptSimpleFunctions.GetNewPartOfText(textBlock, currentPart, textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES);
-                            textPartsCounter++;
-                            byte[] cipher = DESImplementation.Encrypt(ref currentPart);
-                            writer.Write(cipher);
+                            int textPartsCounter = 0;
+                            while (textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES < writtenBytes)
+                            {
+                                CryptSimpleFunctions.GetNewPartOfText(textBlock, currentPart, textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES);
+                                textPartsCounter++;
+                                byte[] cipher = DESImplementation.Encrypt(ref currentPart);
+                                writer.Write(cipher);
+                            }
                         }
+
                     }
 
                 }
-
+            }
+            catch (Exception ae)
+            {
+                _log.Error(ae);
             }
         }
 
