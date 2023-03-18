@@ -68,7 +68,7 @@ namespace DES.HelpFunctions
             { 6,11,13,8,1,4,10,7,9,5,0,15,14,2,3,12 }
         };
 
-        private static readonly byte[,] S7 = {
+        private static readonly byte[,] S7 = {//2 numbers in 1 byte TODO:
             { 13,2,8,4,6,15,11,1,10,9,3,14,5,0,12,7 },
             { 1,15,13,8,10,3,7,4,12,5,6,11,0,14,9,2 },
             { 7,11,4,1,9,12,14,2,0,6,10,13,15,3,5,8 },

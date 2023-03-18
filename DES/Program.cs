@@ -4,6 +4,7 @@ using DES.HelpFunctions;
 using DES.HelpFunctionsAndData;
 using DES.InterfacesDES;
 using DES.KeyManipulations;
+using DES.Presenters;
 using DES.SubBytes;
 using System.Text;
 
@@ -17,36 +18,42 @@ internal class Program
         FeistelNetwork feistelKernel = new FeistelNetwork(keyExpansion, feistelFunction) { MainKey= mainKey };
         DESImplementation desImpl = new DESImplementation(feistelKernel);
 
-        byte[] myTextBytes = new byte[8] { 117, 85, 93, 53, 78, 146, 200, 190 };
+        DemonstrationCypher demo = new DemonstrationCypher(@"C:\Paul\Programming\С#\DES\DES\MyFile.txt",
+            @"C:\Paul\Programming\С#\DES\DES\encrypt.txt",
+            @"C:\Paul\Programming\С#\DES\DES\decrypt.txt", desImpl);
+        demo.encrypt();
+        demo.decrypt();
 
-        //byte[] myText = Encoding.ASCII.GetBytes("He world from C# WPF and MVVM IS COOL iTS MY DATA ./,] 123890");
-        
+        //byte[] myTextBytes = new byte[8] { 117, 85, 93, 53, 78, 146, 200, 190 };
 
-        byte[] currentPart = new byte[8];
-        using (var reader = new StreamReader(@"D:\\Paul\\Programming\\C#\\DES\\DES\\MyFile.txt"))
-        {
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                int textPartsCounter = 0;
-                while (textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES < line.Length)
-                {
-                    CryptSimpleFunctions.GetNewPartOfText(Encoding.ASCII.GetBytes(line), currentPart, textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES);
-                    textPartsCounter++;
-                    byte[] cipher = desImpl.Encrypt(ref currentPart);
+        ////byte[] myText = Encoding.ASCII.GetBytes("He world from C# WPF and MVVM IS COOL iTS MY DATA ./,] 123890");
 
-                    byte[] plainText = desImpl.Decrypt(ref cipher);
-                    int remainedBytes = line.Length - textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES;
-                    if (remainedBytes < 0)
-                    {
-                        CryptSimpleFunctions.ClearBytes(ref plainText, CryptConstants.DES_PART_TEXT_BYTES - Math.Abs(remainedBytes));
-                    }
-                    Console.WriteLine(Encoding.ASCII.GetString(plainText));
-                }
-            }
-        }
 
-        
-        
+        //byte[] currentPart = new byte[8];
+        //using (var reader = new StreamReader(@"C:\Paul\Programming\С#\DES\DES\MyFile.txt"))
+        //{
+        //    string line;
+        //    while ((line = reader.ReadLine()) != null)
+        //    {
+        //        int textPartsCounter = 0;
+        //        while (textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES < line.Length)
+        //        {
+        //            CryptSimpleFunctions.GetNewPartOfText(Encoding.ASCII.GetBytes(line), currentPart, textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES);
+        //            textPartsCounter++;
+        //            byte[] cipher = desImpl.Encrypt(ref currentPart);
+
+        //            byte[] plainText = desImpl.Decrypt(ref cipher);
+        //            int remainedBytes = line.Length - textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES;
+        //            if (remainedBytes < 0)
+        //            {
+        //                CryptSimpleFunctions.ClearBytes(ref plainText, CryptConstants.DES_PART_TEXT_BYTES - Math.Abs(remainedBytes));
+        //            }
+        //            Console.WriteLine(Encoding.ASCII.GetString(plainText));
+        //        }
+        //    }
+        //}
+
+
+
     }
 }

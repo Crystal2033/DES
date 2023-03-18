@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DES.FeistelImplementation
 {
-    public class FeistelNetwork
+    public sealed class FeistelNetwork
     {
         public enum CryptStatus
         {
@@ -19,14 +19,15 @@ namespace DES.FeistelImplementation
         private List<byte[]> _raundKeys;
         private readonly int _valueOfRaunds = 16;
         private readonly byte[] _mainKey;
-        public byte[] MainKey {
-            get{
-                return MainKey;
-            } 
-            init{
+        public byte[] MainKey{
+            get =>
+                MainKey;
+            
+            init {
                 _mainKey = value;
                 _raundKeys = KeyExpander.GenerateRoundKeys(_mainKey);
-            } }
+            }
+        }
 
         public IKeyExpansion KeyExpander { get; init; }
         public IFeistelFunction FeistelFunction { get; init; }

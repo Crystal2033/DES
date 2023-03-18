@@ -27,12 +27,12 @@ namespace DES.FeistelImplementation
             {
                 result = CryptSimpleFunctions.XorByteArrays(bytes, raundKey);
             }
-            catch(ArgumentException exc){
+            catch(ArgumentException exc){//Agregate exception
                 Console.WriteLine(exc.Message);
                 return new byte[0];
             }
             
-            AbstractSubBytes desSubBytes = new DesSybBytes();
+            AbstractSubBytes desSubBytes = new DesSybBytes();// readonly field instance
 
             desSubBytes.SubBytes(ref result, 48, 6, DESStandartBlocks.SMatrix, 4);
 
