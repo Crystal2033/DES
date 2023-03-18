@@ -7,7 +7,7 @@ using DES.HelpFunctionsAndData;
 
 namespace DES.HelpFunctions
 {
-    internal class CryptSimpleFunctions  
+    internal static class CryptSimpleFunctions  
     {
         
         public static void ShowBinaryView(in byte[] viewBytes, in string message="") {

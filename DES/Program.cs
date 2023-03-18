@@ -18,42 +18,8 @@ internal class Program
         FeistelNetwork feistelKernel = new FeistelNetwork(keyExpansion, feistelFunction) { MainKey= mainKey };
         DESImplementation desImpl = new DESImplementation(feistelKernel);
 
-        DemonstrationCypher demo = new DemonstrationCypher(@"C:\Paul\Programming\С#\DES\DES\MyFile.txt",
-            @"C:\Paul\Programming\С#\DES\DES\encrypt.txt",
-            @"C:\Paul\Programming\С#\DES\DES\decrypt.txt", desImpl);
-        demo.encrypt();
-        demo.decrypt();
-
-        //byte[] myTextBytes = new byte[8] { 117, 85, 93, 53, 78, 146, 200, 190 };
-
-        ////byte[] myText = Encoding.ASCII.GetBytes("He world from C# WPF and MVVM IS COOL iTS MY DATA ./,] 123890");
-
-
-        //byte[] currentPart = new byte[8];
-        //using (var reader = new StreamReader(@"C:\Paul\Programming\С#\DES\DES\MyFile.txt"))
-        //{
-        //    string line;
-        //    while ((line = reader.ReadLine()) != null)
-        //    {
-        //        int textPartsCounter = 0;
-        //        while (textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES < line.Length)
-        //        {
-        //            CryptSimpleFunctions.GetNewPartOfText(Encoding.ASCII.GetBytes(line), currentPart, textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES);
-        //            textPartsCounter++;
-        //            byte[] cipher = desImpl.Encrypt(ref currentPart);
-
-        //            byte[] plainText = desImpl.Decrypt(ref cipher);
-        //            int remainedBytes = line.Length - textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES;
-        //            if (remainedBytes < 0)
-        //            {
-        //                CryptSimpleFunctions.ClearBytes(ref plainText, CryptConstants.DES_PART_TEXT_BYTES - Math.Abs(remainedBytes));
-        //            }
-        //            Console.WriteLine(Encoding.ASCII.GetString(plainText));
-        //        }
-        //    }
-        //}
-
-
-
+        DemonstrationCypher demo = new DemonstrationCypher(desImpl);
+        demo.encrypt(@"D:\Paul\Programming\C#\DES\DES\MyFile.txt", @"D:\Paul\Programming\C#\DES\DES\encrypt.txt");
+        demo.decrypt(@"D:\Paul\Programming\C#\DES\DES\encrypt.txt", @"D:\Paul\Programming\C#\DES\DES\decrypt.txt");
     }
 }

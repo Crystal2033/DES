@@ -7,7 +7,7 @@ using DES.HelpFunctionsAndData;
 
 namespace DES.HelpFunctions
 {
-    internal class CryptSimpleFunctions  
+    internal static class CryptSimpleFunctions  
     {
         
         public static void ShowBinaryView(in byte[] viewBytes, in string message="") {
@@ -138,9 +138,4 @@ namespace DES.HelpFunctions
         }
     }
 }
-gth - startIndex;
-            int pureTextSize = (textSizeWithoutBlock < CryptConstants.DES_PART_TEXT_BYTES && textSizeWithoutBlock != 0)
-                ? textSizeWithoutBlock % CryptConstants.DES_PART_TEXT_BYTES
-                : CryptConstants.DES_PART_TEXT_BYTES;
-
-            Array.C
+      
