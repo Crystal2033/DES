@@ -15,7 +15,7 @@ namespace DES.KeyManipulations
     {
 
         public static readonly int keySize = 56;
-        protected override List<byte[]> GenerateKeys(in byte[] preparedKey)//checked
+        protected override List<byte[]> GenerateKeys(in byte[] preparedKey)
         {
             List<byte[]> raundKeys = new();
             byte[] workingKey = (byte[])preparedKey.Clone();
@@ -34,7 +34,6 @@ namespace DES.KeyManipulations
                 DRaundKeys.Add(CryptSimpleFunctions.CycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
 
                 byte[] CDKey = CryptSimpleFunctions.ConcatTwoBitParts(CRaundKeys[i + 1], keySize / 2, DRaundKeys[i + 1], keySize / 2);
-                //CryptSimpleFunctions.ShowBinaryView(CDKey, $"CDKey{i}");
 
                 CryptSimpleFunctions.Permutation(ref CDKey, DESStandartBlocks.raundKeyCompressionBlock);
                 raundKeys.Add(CDKey);
@@ -48,9 +47,9 @@ namespace DES.KeyManipulations
 
         
 
-        protected override void MainKeyPreparation(in byte[] mainKey, out byte[] preparedKey) //checked
+        protected override void MainKeyPreparation(in byte[] mainKey, out byte[] preparedKey)
         {
-            preparedKey = new byte[8];// DES specify
+            preparedKey = new byte[8];
             int bitsWithValueOneCounter = 0;
             int blockCounter = 0;
             int j = 0;

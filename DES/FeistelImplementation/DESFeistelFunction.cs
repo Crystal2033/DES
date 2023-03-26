@@ -17,7 +17,8 @@ namespace DES.FeistelImplementation
          * raundKey is 48 bits value
          * result is 32 bits value Feistel function result
          */
-        public byte[] FeistelFunction(ref byte[] bytes, in byte[] raundKey) //checked
+        private readonly AbstractSubBytes desSubBytes = new DesSybBytes();
+        public byte[] FeistelFunction(ref byte[] bytes, in byte[] raundKey)
         {
             byte[] result;
 
@@ -32,7 +33,7 @@ namespace DES.FeistelImplementation
                 return new byte[0];
             }
             
-            AbstractSubBytes desSubBytes = new DesSybBytes();// readonly field instance
+            
 
             desSubBytes.SubBytes(ref result, 48, 6, DESStandartBlocks.SMatrix, 4);
 

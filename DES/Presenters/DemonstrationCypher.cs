@@ -1,5 +1,6 @@
 ﻿using DES.HelpFunctions;
 using DES.HelpFunctionsAndData;
+using DES.InterfacesDES;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,10 @@ namespace DES.Presenters
     {
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly DESImplementation DESImplementation;
-        public DemonstrationCypher(DESImplementation dESImplementation)
+        private readonly ISymmetricEncryption _symmetricImplementation;
+        public DemonstrationCypher(ISymmetricEncryption dESImplementation)
         {
-            DESImplementation = dESImplementation;
+            _symmetricImplementation = dESImplementation;
         }
 
         private bool isCorrectDecryption(string startFile, string decryptedFile)
@@ -47,7 +48,7 @@ namespace DES.Presenters
                             {
                                 CryptSimpleFunctions.GetNewPartOfText(textBlock, currentPart, textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES);
                                 textPartsCounter++;
-                                byte[] cipher = DESImplementation.Encrypt(ref currentPart);
+                                byte[] cipher = _symmetricImplementation.Encrypt(ref currentPart);
                                 writer.Write(cipher);
                             }
                         }
@@ -86,7 +87,7 @@ namespace DES.Presenters
                         {
                             CryptSimpleFunctions.GetNewPartOfText(cryptedTextBlock, currentPart, textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES);
                             textPartsCounter++;
-                            byte[] plainText = DESImplementation.Decrypt(ref currentPart);
+                            byte[] plainText = _symmetricImplementation.Decrypt(ref currentPart);
                             int remainedBytes = cryptedTextBlock.Length - textPartsCounter * CryptConstants.DES_PART_TEXT_BYTES;
                             if (remainedBytes < 0)
                             {

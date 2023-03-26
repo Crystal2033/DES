@@ -37,7 +37,7 @@ namespace DES.FeistelImplementation
         }
 
         public byte[] Execute(in byte[] partOfText, int sizeInBits, CryptStatus cryptStatus)
-        { //not checked
+        {
             CryptSimpleFunctions.SliceArrayOnTwoArrays(partOfText, sizeInBits / 2, sizeInBits / 2, out byte[] leftPart, out byte[] rightPart);
             byte[] nextLeftPart = default;
             byte[] nextRightPart = default;
