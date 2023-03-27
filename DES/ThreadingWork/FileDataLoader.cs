@@ -9,15 +9,15 @@ namespace DES.ThreadingWork
     public sealed class FileDataLoader
     {
 		public static int TextBlockSize = 2000;
-		private byte[] _textBlock;
+		private byte[] _textBlock = null;
 		private int _factTextBlockSize;
 		public int FactTextBlockSize { get; set; }
 			
 		public byte[] TextBlock
 		{
-			get;
-			set;
-		} = new byte[TextBlockSize];
+			get { return _textBlock ?? (_textBlock = new byte[TextBlockSize]); }
+			set { _textBlock = value; }
+		}
 
 		private int currentPosInFile;
 		private BinaryReader _fileReadFrom;
@@ -37,7 +37,7 @@ namespace DES.ThreadingWork
 				insertTextBlockInFile();
             }
 
-            _factTextBlockSize = _fileReadFrom.Read(_textBlock, currentPosInFile, TextBlockSize);
+            _factTextBlockSize = _fileReadFrom.Read(TextBlock, currentPosInFile, TextBlockSize);
 			currentPosInFile += _factTextBlockSize;
         }
 
@@ -45,7 +45,7 @@ namespace DES.ThreadingWork
         {
 			if(_factTextBlockSize != 0)
 			{
-                _fileWriteTo.Write(_textBlock, 0, _factTextBlockSize);
+                _fileWriteTo.Write(TextBlock, 0, _factTextBlockSize);
             } 
         }
     }

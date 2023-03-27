@@ -31,11 +31,10 @@ namespace DES.CypherModes.ModesImplementation
         private void Execute(string inputFile, string outputFile, CryptOperation cryptOperation)
         {
             FileDataLoader loader = new(inputFile, outputFile);
-            bool isMainThreadSleep = true;
             ECBThreadWork[] ecbThreads = new ECBThreadWork[ThreadsInfo.VALUE_OF_THREAD];
 
 
-            Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD + 1, (bar) =>
+            Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
             {
                 loader.reloadTextBlockAndOutputInFile();
 
@@ -46,24 +45,23 @@ namespace DES.CypherModes.ModesImplementation
                     {
                         ecbThreads[i].BytesTransformed = 0;
                     }
-                    isMainThreadSleep = false;
                     //Wake up main thread
                 }
             });
 
-            
+            List<Task> tasks = new List<Task>();
 
             for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
             {
                 ecbThreads[i] = new ECBThreadWork(loader, _cryptAlgorithm, barrier);
-                ThreadPool.QueueUserWorkItem(new WaitCallback(ecbThreads[i].Run), cryptOperation);
+                tasks.Add(Task.Run(() =>
+                {
+                    ecbThreads[i].Run(cryptOperation);
+                }));
             }
 
-            while (isMainThreadSleep)
-            {
-                barrier.SignalAndWait();
-            }
-            //Main thread has to sleep
+            Task.WaitAll(tasks.ToArray());
+
         }
     }
 }
