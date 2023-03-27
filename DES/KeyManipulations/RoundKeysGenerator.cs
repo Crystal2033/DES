@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DES.KeyManipulations
 {
-    public abstract class RaundKeysGenerator : IKeyExpansion
+    public abstract class RoundKeysGenerator : IKeyExpansion
     {
         virtual protected void MainKeyPreparation(in byte[] mainKey, out byte[] preparedKey)
         {

@@ -5,6 +5,7 @@ using DES.HelpFunctionsAndData;
 using DES.InterfacesDES;
 using DES.KeyManipulations;
 using DES.Presenters;
+using DES.SandBox;
 using DES.SubBytes;
 using log4net;
 using System.Reflection;
@@ -15,15 +16,19 @@ internal class Program
     private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
     private static void Main(string[] args)
     {
-        byte[] mainKey = new byte[7] { 123,43,135,23,233,231,23 };
-        IKeyExpansion keyExpansion = new DESKeysGenerator();
-        IFeistelFunction feistelFunction = new DESFeistelFunction();
+        //byte[] mainKey = new byte[7] { 123,43,135,23,233,231,23 };
+        //IKeyExpansion keyExpansion = new DESKeysGenerator();
+        //IFeistelFunction feistelFunction = new DESFeistelFunction();
 
-        FeistelNetwork feistelKernel = new FeistelNetwork(keyExpansion, feistelFunction) { MainKey= mainKey };
-        ISymmetricEncryption desImpl = new DESImplementation(feistelKernel);
+        //FeistelNetwork feistelKernel = new FeistelNetwork(keyExpansion, feistelFunction) { MainKey= mainKey };
+        //ISymmetricEncryption desImpl = new DESImplementation(feistelKernel);
 
-        DemonstrationCypher demo = new DemonstrationCypher(desImpl);
-        demo.encrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\2022-09-06 18-43-02.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4");
-        demo.decrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\decrypt.mp4");
+        //DemonstrationCypher demo = new DemonstrationCypher(desImpl);
+        //demo.encrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\2022-09-06 18-43-02.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4");
+        //demo.decrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\decrypt.mp4");
+
+        ThreadBarierTesting testinObj = new();
+        testinObj.test();
+
     }
 }

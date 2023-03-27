@@ -1,4 +1,5 @@
-﻿using DES.HelpFunctions;
+﻿using DES.CypherEnums;
+using DES.HelpFunctions;
 using DES.InterfacesDES;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,6 @@ namespace DES.FeistelImplementation
 {
     public sealed class FeistelNetwork
     {
-        public enum CryptStatus
-        {
-            ENCRYPT, DECRYPT
-        };
 
         private List<byte[]> _raundKeys;
         private readonly int _valueOfRaunds = 16;
@@ -36,7 +33,7 @@ namespace DES.FeistelImplementation
             FeistelFunction = feistelFunction;
         }
 
-        public byte[] Execute(in byte[] partOfText, int sizeInBits, CryptStatus cryptStatus)
+        public byte[] Execute(in byte[] partOfText, int sizeInBits, CryptOperation cryptStatus)
         {
             CryptSimpleFunctions.SliceArrayOnTwoArrays(partOfText, sizeInBits / 2, sizeInBits / 2, out byte[] leftPart, out byte[] rightPart);
             byte[] nextLeftPart = default;
@@ -45,7 +42,7 @@ namespace DES.FeistelImplementation
             for(int i = 0; i < _valueOfRaunds; i++){
                 nextLeftPart = (byte[])rightPart.Clone();
                 nextRightPart = CryptSimpleFunctions.XorByteArrays(leftPart, 
-                    FeistelFunction.FeistelFunction(ref rightPart, _raundKeys[(cryptStatus == CryptStatus.ENCRYPT) ? i : _valueOfRaunds - i -1]));
+                    FeistelFunction.FeistelFunction(ref rightPart, _raundKeys[(cryptStatus == CryptOperation.ENCRYPT) ? i : _valueOfRaunds - i -1]));
 
                 leftPart = nextLeftPart;
                 rightPart = nextRightPart;

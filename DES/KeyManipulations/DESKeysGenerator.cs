@@ -11,36 +11,36 @@ using System.Threading.Tasks;
 
 namespace DES.KeyManipulations
 {
-    sealed public class DESKeysGenerator : RaundKeysGenerator
+    sealed public class DESKeysGenerator : RoundKeysGenerator
     {
 
         public static readonly int keySize = 56;
         protected override List<byte[]> GenerateKeys(in byte[] preparedKey)
         {
-            List<byte[]> raundKeys = new();
+            List<byte[]> roundKeys = new();
             byte[] workingKey = (byte[])preparedKey.Clone();
             CryptSimpleFunctions.Permutation(ref workingKey, DESStandartBlocks.keyPermutationBlock);
             CryptSimpleFunctions.SliceArrayOnTwoArrays(workingKey, keySize/2, keySize/2, out byte[] C0, out byte[] D0);
 
-            List<byte[]> CRaundKeys = new List<byte[]>();
-            CRaundKeys.Add(C0);
+            List<byte[]> CRoundKeys = new List<byte[]>();
+            CRoundKeys.Add(C0);
             
-            List<byte[]> DRaundKeys = new List<byte[]>();
-            DRaundKeys.Add(D0);
+            List<byte[]> DRoundKeys = new List<byte[]>();
+            DRoundKeys.Add(D0);
 
             for (int i = 0; i < DESStandartBlocks.keyRaundLeftShifts.Length; i++){
-                CRaundKeys.Add(CryptSimpleFunctions.CycleLeftShift(CRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                CRoundKeys.Add(CryptSimpleFunctions.CycleLeftShift(CRoundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
 
-                DRaundKeys.Add(CryptSimpleFunctions.CycleLeftShift(DRaundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
+                DRoundKeys.Add(CryptSimpleFunctions.CycleLeftShift(DRoundKeys[i], keySize / 2, DESStandartBlocks.keyRaundLeftShifts[i]));
 
-                byte[] CDKey = CryptSimpleFunctions.ConcatTwoBitParts(CRaundKeys[i + 1], keySize / 2, DRaundKeys[i + 1], keySize / 2);
+                byte[] CDKey = CryptSimpleFunctions.ConcatTwoBitParts(CRoundKeys[i + 1], keySize / 2, DRoundKeys[i + 1], keySize / 2);
 
                 CryptSimpleFunctions.Permutation(ref CDKey, DESStandartBlocks.raundKeyCompressionBlock);
-                raundKeys.Add(CDKey);
+                roundKeys.Add(CDKey);
 
             }
 
-            return raundKeys;
+            return roundKeys;
         }
 
         
