@@ -12,30 +12,32 @@ namespace DES.SandBox
         public void test()
         {
             string myString = "Hello world, my dear Paul";
-            bool isMainThreadSleep = true;
+            bool isEnd = false;
+            List<Task> myTasks = new List<Task>();
+            MyThread[] myThreads = new MyThread[3];
 
             Barrier barrier = new Barrier(3, (bar) =>
             {
                 Console.WriteLine($"HEEEEEY {bar.CurrentPhaseNumber}");
+                if(bar.CurrentPhaseNumber == 10)
+                {
+                    for(int i = 0; i < myThreads.Length; i++)
+                    {
+                        myThreads[i].IsEnd = true;
+                    }
+                }
             });
 
-            MyThread mt1 = new MyThread(barrier);
-            MyThread mt2 = new MyThread(barrier);
-            MyThread mt3 = new MyThread(barrier);
+            
 
-            List<Task> myTasks = new List<Task>();
-            myTasks.Add(Task.Run(() =>
+            for(int i = 0; i < myThreads.Length; i++)
             {
-                mt1.Run(myString);
-            }));
-            myTasks.Add(Task.Run(() =>
-            {
-                mt2.Run(myString);
-            }));
-            myTasks.Add(Task.Run(() =>
-            {
-                mt3.Run(myString);
-            }));
+                myThreads[i] = new MyThread(barrier);
+                myTasks.Add(Task.Run(() =>
+                {
+                    myThreads[i].Run(myString);
+                }));
+            }
 
             Task.WaitAll(myTasks.ToArray());
             

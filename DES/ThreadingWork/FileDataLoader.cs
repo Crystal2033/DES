@@ -43,7 +43,10 @@ namespace DES.ThreadingWork
 
         private void insertTextBlockInFile()
         {
-            _fileWriteTo.Write(_textBlock, 0, _factTextBlockSize);
+			if(_factTextBlockSize != 0)
+			{
+                _fileWriteTo.Write(_textBlock, 0, _factTextBlockSize);
+            } 
         }
     }
 }

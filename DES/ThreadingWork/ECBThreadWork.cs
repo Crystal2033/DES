@@ -62,16 +62,19 @@ namespace DES.ThreadingWork
             CryptOperation cryptOperation = (CryptOperation)obj;
             int posInTextBlock = _threadId * 8;
 
-            while(posInTextBlock <= _loader.FactTextBlockSize)
+            while(_loader.FactTextBlockSize != 0)
             {
-                byte[] partOfTextBlock = GetPartOfTextBlock(posInTextBlock);
+                while (posInTextBlock <= _loader.FactTextBlockSize)
+                {
+                    byte[] partOfTextBlock = GetPartOfTextBlock(posInTextBlock);
 
-                byte[] newBytes = GetBytesAfterCryptOperation(cryptOperation, ref partOfTextBlock);
-                insertPartInTextBlock(posInTextBlock, newBytes);
-                _bytesTransformed++;
-                posInTextBlock = (_bytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
+                    byte[] newBytes = GetBytesAfterCryptOperation(cryptOperation, ref partOfTextBlock);
+                    insertPartInTextBlock(posInTextBlock, newBytes);
+                    _bytesTransformed++;
+                    posInTextBlock = (_bytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
+                }
+                _barrier.SignalAndWait();
             }
-            _barrier.SignalAndWait();
 
         }
     }

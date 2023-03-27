@@ -11,6 +11,7 @@ namespace DES.SandBox
         private static int absID;
         private int id;
         Barrier _barrier;
+        public bool IsEnd { get; set; }
         public MyThread(Barrier barrier)
         {
             absID++;
@@ -20,8 +21,12 @@ namespace DES.SandBox
         public void Run(object workingObj)
         {
             string workStr = workingObj as string;
-            for(int i =0; i < 100; i++)
+            for(int i = 0; i < 100; i++)
             {
+                if (IsEnd)
+                {
+                    return;
+                }
                 Console.WriteLine($"Thread {id} with text: {workStr} is {i + 1}");
                 _barrier.SignalAndWait();
                 //Console.WriteLine($"Unblocked {id}");
