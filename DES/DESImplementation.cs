@@ -1,4 +1,5 @@
-﻿using DES.FeistelImplementation;
+﻿using DES.CypherEnums;
+using DES.FeistelImplementation;
 using DES.HelpFunctions;
 using DES.InterfacesDES;
 using System;
@@ -17,7 +18,7 @@ namespace DES
             _feistel = feistel;
         }
 
-        private byte[] MakeCryptOperation(ref byte[] bytes, FeistelNetwork.CryptStatus cryptStatus)
+        private byte[] MakeCryptOperation(ref byte[] bytes, CryptOperation cryptStatus)
         {
             CryptSimpleFunctions.Permutation(ref bytes, DESStandartBlocks.IPBlock);
             byte[] value = _feistel.Execute(in bytes, 64, cryptStatus);
@@ -26,13 +27,13 @@ namespace DES
         }
         public byte[] Encrypt(ref byte[] bytes)
         {
-            return MakeCryptOperation(ref bytes, FeistelNetwork.CryptStatus.ENCRYPT);
+            return MakeCryptOperation(ref bytes, CryptOperation.ENCRYPT);
         }
 
 
         public byte[] Decrypt(ref byte[] bytes)
         {
-            return MakeCryptOperation(ref bytes, FeistelNetwork.CryptStatus.DECRYPT);
+            return MakeCryptOperation(ref bytes, CryptOperation.DECRYPT);
         }
 
         

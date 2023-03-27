@@ -28,7 +28,12 @@ internal class Program
         //demo.decrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\decrypt.mp4");
 
         ThreadBarierTesting testinObj = new();
-        testinObj.test();
+        Task.Run( async () =>
+        {
+            testinObj.test();
+        }).Wait();
+        Console.WriteLine("Task is done");
+        
 
     }
 }

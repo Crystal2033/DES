@@ -17,10 +17,10 @@ namespace DES.CypherModes.ModesImplementation
             _mainKey = mainKey;
             _cryptAlgorithm = cryptAlgorithm;
         }
-        public abstract void DecryptWithMode(in string fileToDecrypt, in string decryptResultFile);
+        public abstract void DecryptWithMode(string fileToDecrypt, string decryptResultFile);
 
 
-        public abstract void EncryptWithMode(in string fileToEncrypt, in string encryptResultFile);
+        public abstract void EncryptWithMode(string fileToEncrypt, string encryptResultFile);
         
     }
 }

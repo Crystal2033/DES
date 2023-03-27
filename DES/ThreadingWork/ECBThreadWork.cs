@@ -18,14 +18,14 @@ namespace DES.ThreadingWork
         private FileDataLoader _loader;
         private int _bytesTransformed;
         private ISymmetricEncryption _algorithm;
-        //private CryptOperation _cryptOperation;
+        public int BytesTransformed { get => _bytesTransformed; set { _bytesTransformed = value; } }
         public ECBThreadWork(FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier)
         {
             _algorithm = algorithm;
             _loader = loader;
             _threadId = _absID++;
             _barrier = barrier;
-        }
+        }   
 
         private byte[] GetPartOfTextBlock(int posInTextBlock)
         {

@@ -8,8 +8,8 @@ namespace DES.CypherModes
 {
     public interface IModeEncryption
     {
-        public void EncryptWithMode(in string fileToEncrypt, in string encryptResultFile);
+        public void EncryptWithMode(string fileToEncrypt, string encryptResultFile);
                
-        public void DecryptWithMode(in string fileToDecrypt, in string decryptResultFile);
+        public void DecryptWithMode(string fileToDecrypt, string decryptResultFile);
     }
 }

@@ -17,16 +17,16 @@ namespace DES.SandBox
             id = absID;
             _barrier = barrier;
         }
-        public void run(object workingObj)
+        public void Run(object workingObj)
         {
             string workStr = workingObj as string;
-            for(int i =0; i < 10; i++)
+            for(int i =0; i < 100; i++)
             {
-                Console.WriteLine($"Thread {id} with text: {workStr}");
+                Console.WriteLine($"Thread {id} with text: {workStr} is {i + 1}");
                 _barrier.SignalAndWait();
-                Console.WriteLine($"Unblocked {id}");
+                //Console.WriteLine($"Unblocked {id}");
             }
-
+            
         }
     }
 }

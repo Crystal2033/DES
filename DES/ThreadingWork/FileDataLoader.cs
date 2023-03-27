@@ -38,11 +38,12 @@ namespace DES.ThreadingWork
             }
 
             _factTextBlockSize = _fileReadFrom.Read(_textBlock, currentPosInFile, TextBlockSize);
+			currentPosInFile += _factTextBlockSize;
         }
 
         private void insertTextBlockInFile()
         {
-            _fileWriteTo.Write(_textBlock, 0, TextBlockSize);
+            _fileWriteTo.Write(_textBlock, 0, _factTextBlockSize);
         }
     }
 }
