@@ -117,9 +117,9 @@ namespace DES.HelpFunctions
 
         public static void PKCS7Padding(byte[] bytes, int actualSize)
         {
-            for(int i = actualSize; i < CryptConstants.BITS_IN_BYTE; i++)
+            for(int i = actualSize; i < CryptConstants.DES_PART_TEXT_BYTES; i++)
             {
-                bytes[i] = (byte)(CryptConstants.BITS_IN_BYTE - actualSize);
+                bytes[i] = (byte)(CryptConstants.DES_PART_TEXT_BYTES - actualSize);
             }
         }
 

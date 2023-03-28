@@ -1,4 +1,5 @@
 ﻿using DES.CypherEnums;
+using DES.HelpFunctions;
 using DES.HelpFunctionsAndData;
 using DES.InterfacesDES;
 using log4net.Repository.Hierarchy;
@@ -13,6 +14,7 @@ namespace DES.ThreadingWork
     public class ECBThreadWork
     {
         private static int _absID;
+        public static int AbsIdProp { get { return _absID; } set { _absID = value; } }
         private int _threadId;
         private Barrier _barrier;
         private FileDataLoader _loader;
@@ -30,16 +32,19 @@ namespace DES.ThreadingWork
         private byte[] GetPartOfTextBlock(int posInTextBlock)
         {
             byte[] partOfTextBlock = new byte[8];
-            for (int i = 0; i < partOfTextBlock.Length; i++)
+            int readTextSize = (_loader.FactTextBlockSize - posInTextBlock < 8) ? _loader.FactTextBlockSize - posInTextBlock : partOfTextBlock.Length;
+            for (int i = 0; i < readTextSize; i++)
             {
                 partOfTextBlock[i] = _loader.TextBlock[posInTextBlock + i];
             }
+            _loader.FactTextBlockSize += partOfTextBlock.Length - readTextSize;
+            CryptSimpleFunctions.PKCS7Padding(partOfTextBlock, readTextSize);
             return partOfTextBlock;
         }
 
-        private void insertPartInTextBlock(int posInTextBlock, byte[] source)
+        private void insertPartInTextBlock(int posInTextBlock, byte[] source, int sourceSize)
         {
-            for (int i = 0; i < source.Length; i++)
+            for (int i = 0; i < sourceSize; i++)
             {
                 _loader.TextBlock[posInTextBlock + i] = source[i];
             }
@@ -61,18 +66,33 @@ namespace DES.ThreadingWork
         {
             CryptOperation cryptOperation = (CryptOperation)obj;
             int posInTextBlock = _threadId * 8;
+            int realCypherPartSize = CryptConstants.DES_PART_TEXT_BYTES;
 
-            while(_loader.FactTextBlockSize != 0)
-            {
-                while (posInTextBlock <= _loader.FactTextBlockSize)
+            while (_loader.FactTextBlockSize != 0)
+            { 
+                while (posInTextBlock < _loader.FactTextBlockSize)
                 {
                     byte[] partOfTextBlock = GetPartOfTextBlock(posInTextBlock);
 
                     byte[] newBytes = GetBytesAfterCryptOperation(cryptOperation, ref partOfTextBlock);
-                    insertPartInTextBlock(posInTextBlock, newBytes);
+                    if (cryptOperation == CryptOperation.DECRYPT) // checking padding for decryption
+                    {
+                        byte lastByteValue = newBytes[newBytes.Length - 1];
+                        if (lastByteValue < CryptConstants.DES_PART_TEXT_BYTES) //There is a padding PKCS7
+                        {
+                            _loader.FactTextBlockSize -= lastByteValue;
+                            realCypherPartSize = CryptConstants.DES_PART_TEXT_BYTES - lastByteValue;
+                            CryptSimpleFunctions.ClearBytes(ref newBytes, newBytes.Length - lastByteValue);
+                        }
+                    }
+
+                    insertPartInTextBlock(posInTextBlock, newBytes, realCypherPartSize);
+                    
                     _bytesTransformed++;
                     posInTextBlock = (_bytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
                 }
+                _bytesTransformed = 0;
+                posInTextBlock = 0;
                 _barrier.SignalAndWait();
             }
 

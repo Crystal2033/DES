@@ -8,6 +8,6 @@ namespace DES.ThreadingWork
 {
     public static class ThreadsInfo
     {
-        public static readonly int VALUE_OF_THREAD = 4; 
+        public static readonly int VALUE_OF_THREAD = 6; 
     }
 }

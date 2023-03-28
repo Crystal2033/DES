@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DES.ThreadingWork;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,9 @@ namespace DES.SandBox
             string myString = "Hello world, my dear Paul";
             bool isEnd = false;
             List<Task> myTasks = new List<Task>();
-            MyThread[] myThreads = new MyThread[3];
+            MyThread[] myThreads = new MyThread[ThreadsInfo.VALUE_OF_THREAD];
 
-            Barrier barrier = new Barrier(3, (bar) =>
+            Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
             {
                 Console.WriteLine($"HEEEEEY {bar.CurrentPhaseNumber}");
                 if(bar.CurrentPhaseNumber == 10)

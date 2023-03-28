@@ -1,9 +1,11 @@
 ﻿using DES.CypherEnums;
 using DES.InterfacesDES;
 using DES.ThreadingWork;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +13,8 @@ namespace DES.CypherModes.ModesImplementation
 {
     public class ECBModeImpl : CryptModeImpl
     {
+        private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public ECBModeImpl(byte[] mainKey, ISymmetricEncryption cryptAlgorithm) : base(mainKey, cryptAlgorithm)
         {
 
@@ -31,8 +35,18 @@ namespace DES.CypherModes.ModesImplementation
         private void Execute(string inputFile, string outputFile, CryptOperation cryptOperation)
         {
             FileDataLoader loader = new(inputFile, outputFile);
-            ECBThreadWork[] ecbThreads = new ECBThreadWork[ThreadsInfo.VALUE_OF_THREAD];
+            if(cryptOperation == CryptOperation.DECRYPT)
+            {
+                if(loader.TextReadSize % 8 != 0)
+                {
+                    _log.Error($"Text for decryption in {inputFile} is not compatible. Size % 8 != 0.");
+                    loader.CloseStreams();
+                    return;
+                }
+            }
 
+            ECBThreadWork[] ecbThreads = new ECBThreadWork[ThreadsInfo.VALUE_OF_THREAD];
+            Console.WriteLine($"Thread is :{Thread.CurrentThread.Name}");
 
             Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
             {
@@ -54,13 +68,21 @@ namespace DES.CypherModes.ModesImplementation
             for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
             {
                 ecbThreads[i] = new ECBThreadWork(loader, _cryptAlgorithm, barrier);
+                
+            }
+            for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
+            {
+                var task = ecbThreads[i];
                 tasks.Add(Task.Run(() =>
                 {
-                    ecbThreads[i].Run(cryptOperation);
+                    
+                    task.Run(cryptOperation);
                 }));
             }
 
             Task.WaitAll(tasks.ToArray());
+            ECBThreadWork.AbsIdProp = 0;
+            loader.CloseStreams();
 
         }
     }
