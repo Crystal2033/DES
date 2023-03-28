@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DES.CypherModes.ModesImplementation
+namespace DES.CypherModes
 {
     public abstract class CryptModeImpl : IModeEncryption
     {
@@ -21,6 +21,6 @@ namespace DES.CypherModes.ModesImplementation
 
 
         public abstract void EncryptWithMode(string fileToEncrypt, string encryptResultFile);
-        
+
     }
 }
