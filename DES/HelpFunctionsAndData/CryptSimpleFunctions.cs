@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DES.CypherEnums;
 using DES.HelpFunctionsAndData;
+using DES.InterfacesDES;
+using DES.ThreadingWork;
 
 namespace DES.HelpFunctions
 {
@@ -26,6 +29,20 @@ namespace DES.HelpFunctions
             for(int i = startFrom; i < bytes.Length; i++) {
                 bytes[i] = 0;
             }
+        }
+
+        public static int GetPureTextWithoutPaddingSize(ref byte[] checkingBytes, FileDataLoader loader)
+        {
+            int realCypherPartSize = CryptConstants.DES_PART_TEXT_BYTES;
+
+            byte lastByteValue = checkingBytes[checkingBytes.Length - 1];
+            if (lastByteValue < CryptConstants.DES_PART_TEXT_BYTES) //There is a padding PKCS7
+            {
+                loader.FactTextBlockSize -= lastByteValue;
+                realCypherPartSize = CryptConstants.DES_PART_TEXT_BYTES - lastByteValue;
+                ClearBytes(ref checkingBytes, checkingBytes.Length - lastByteValue);
+            }
+            return realCypherPartSize;
         }
 
         public static byte GetBitFromPos(in byte myByte, byte index0FromLeft){
@@ -120,6 +137,18 @@ namespace DES.HelpFunctions
             for(int i = actualSize; i < CryptConstants.DES_PART_TEXT_BYTES; i++)
             {
                 bytes[i] = (byte)(CryptConstants.DES_PART_TEXT_BYTES - actualSize);
+            }
+        }
+
+        public static byte[] GetBytesAfterCryptOperation(CryptOperation operation, ref byte[] partOfText, ISymmetricEncryption algorithm)
+        {
+            if (operation == CryptOperation.ENCRYPT)
+            {
+                return algorithm.Encrypt(ref partOfText);
+            }
+            else
+            {
+                return algorithm.Decrypt(ref partOfText);
             }
         }
 

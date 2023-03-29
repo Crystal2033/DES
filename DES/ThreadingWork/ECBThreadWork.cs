@@ -29,39 +29,6 @@ namespace DES.ThreadingWork
             _barrier = barrier;
         }   
 
-        private byte[] GetPartOfTextBlock(int posInTextBlock)
-        {
-            byte[] partOfTextBlock = new byte[8];
-            int readTextSize = (_loader.FactTextBlockSize - posInTextBlock < 8) ? _loader.FactTextBlockSize - posInTextBlock : partOfTextBlock.Length;
-            for (int i = 0; i < readTextSize; i++)
-            {
-                partOfTextBlock[i] = _loader.TextBlock[posInTextBlock + i];
-            }
-            _loader.FactTextBlockSize += partOfTextBlock.Length - readTextSize;
-            CryptSimpleFunctions.PKCS7Padding(partOfTextBlock, readTextSize);
-            return partOfTextBlock;
-        }
-
-        private void insertPartInTextBlock(int posInTextBlock, byte[] source, int sourceSize)
-        {
-            for (int i = 0; i < sourceSize; i++)
-            {
-                _loader.TextBlock[posInTextBlock + i] = source[i];
-            }
-        }
-
-        private byte[] GetBytesAfterCryptOperation(CryptOperation operation, ref byte[] partOfText)
-        {
-            if(operation == CryptOperation.ENCRYPT)
-            {
-                return _algorithm.Encrypt(ref partOfText);
-            }
-            else
-            {
-                return _algorithm.Decrypt(ref partOfText);
-            }
-        }
-
         public void Run(object obj)
         {
             CryptOperation cryptOperation = (CryptOperation)obj;
@@ -72,21 +39,15 @@ namespace DES.ThreadingWork
             { 
                 while (posInTextBlock < _loader.FactTextBlockSize)
                 {
-                    byte[] partOfTextBlock = GetPartOfTextBlock(posInTextBlock);
+                    byte[] partOfTextBlock = TextBlockOperations.GetPartOfTextBlock(posInTextBlock, _loader);
 
-                    byte[] newBytes = GetBytesAfterCryptOperation(cryptOperation, ref partOfTextBlock);
+                    byte[] newBytes = CryptSimpleFunctions.GetBytesAfterCryptOperation(cryptOperation, ref partOfTextBlock, _algorithm);
                     if (cryptOperation == CryptOperation.DECRYPT) // checking padding for decryption
                     {
-                        byte lastByteValue = newBytes[newBytes.Length - 1];
-                        if (lastByteValue < CryptConstants.DES_PART_TEXT_BYTES) //There is a padding PKCS7
-                        {
-                            _loader.FactTextBlockSize -= lastByteValue;
-                            realCypherPartSize = CryptConstants.DES_PART_TEXT_BYTES - lastByteValue;
-                            CryptSimpleFunctions.ClearBytes(ref newBytes, newBytes.Length - lastByteValue);
-                        }
+                        realCypherPartSize = CryptSimpleFunctions.GetPureTextWithoutPaddingSize(ref newBytes, _loader);
                     }
 
-                    insertPartInTextBlock(posInTextBlock, newBytes, realCypherPartSize);
+                    TextBlockOperations.InsertPartInTextBlock(posInTextBlock, newBytes, realCypherPartSize, _loader);
                     
                     _bytesTransformed++;
                     posInTextBlock = (_bytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;

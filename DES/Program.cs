@@ -18,6 +18,7 @@ internal class Program
     private static void Main(string[] args)
     {
         byte[] mainKey = new byte[7] { 123,43,135,23,233,231,23 };
+        byte[] initVector = new byte[8] { 125, 67, 111, 110, 203, 211, 255, 11 };
         //IKeyExpansion keyExpansion = new DESKeysGenerator();
         //IFeistelFunction feistelFunction = new DESFeistelFunction();
 
@@ -27,10 +28,10 @@ internal class Program
         //DemonstrationCypher demo = new DemonstrationCypher(desImpl);
         //demo.encrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\2022-09-06 18-43-02.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4");
         //demo.decrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\decrypt.mp4");
-        AdvancedCypherSym advancedCypherSym = new(mainKey, DES.CypherEnums.CypherMode.ECB, DES.CypherEnums.SymmetricAlgorithm.DES);
-        advancedCypherSym.Encrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\MyFile.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\EncryptMode.txt");
+        AdvancedCypherSym advancedCypherSym = new(mainKey, DES.CypherEnums.CypherMode.CBC, DES.CypherEnums.SymmetricAlgorithm.DES, initVector);
+        advancedCypherSym.Encrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\MyFile.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\EncryptModeCBC.txt");
         Console.WriteLine("Encrypt is done");
-        advancedCypherSym.Decrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\EncryptMode.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\DecryptMode.txt");
+        //advancedCypherSym.Decrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\EncryptMode.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\DecryptMode.txt");
         //ThreadBarierTesting testinObj = new();
         //Task.Run( async () =>
         //{
