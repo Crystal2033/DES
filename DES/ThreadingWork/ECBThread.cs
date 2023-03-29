@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DES.ThreadingWork
 {
-    public class ECBThreadWork
+    public class ECBThread
     {
         private static int _absID;
         public static int AbsIdProp { get { return _absID; } set { _absID = value; } }
@@ -21,7 +21,7 @@ namespace DES.ThreadingWork
         private int _bytesTransformed;
         private ISymmetricEncryption _algorithm;
         public int BytesTransformed { get => _bytesTransformed; set { _bytesTransformed = value; } }
-        public ECBThreadWork(FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier)
+        public ECBThread(FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier)
         {
             _algorithm = algorithm;
             _loader = loader;

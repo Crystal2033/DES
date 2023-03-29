@@ -45,7 +45,7 @@ namespace DES.CypherModes.ModesImplementation
                 }
             }
 
-            ECBThreadWork[] ecbThreads = new ECBThreadWork[ThreadsInfo.VALUE_OF_THREAD];
+            ECBThread[] ecbThreads = new ECBThread[ThreadsInfo.VALUE_OF_THREAD];
             Console.WriteLine($"Thread is :{Thread.CurrentThread.Name}");
 
             Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
@@ -67,7 +67,7 @@ namespace DES.CypherModes.ModesImplementation
 
             for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
             {
-                ecbThreads[i] = new ECBThreadWork(loader, _cryptAlgorithm, barrier);
+                ecbThreads[i] = new ECBThread(loader, _cryptAlgorithm, barrier);
                 
             }
             for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
@@ -81,7 +81,7 @@ namespace DES.CypherModes.ModesImplementation
             }
 
             Task.WaitAll(tasks.ToArray());
-            ECBThreadWork.AbsIdProp = 0;
+            ECBThread.AbsIdProp = 0;
             loader.CloseStreams();
 
         }
