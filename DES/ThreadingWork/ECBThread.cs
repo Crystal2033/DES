@@ -40,7 +40,7 @@ namespace DES.ThreadingWork
                     posInTextBlock = (BytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
                 }
                 BytesTransformed = 0;
-                posInTextBlock = 0;
+                posInTextBlock = _threadId * 8;
                 _barrier.SignalAndWait();
             }
 

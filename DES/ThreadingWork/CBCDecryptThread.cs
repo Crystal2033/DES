@@ -54,7 +54,7 @@ namespace DES.ThreadingWork
                 }
 
                 BytesTransformed = 0;
-                posInTextBlock = 0;
+                posInTextBlock = _threadId * 8;
                 writtenTextBlocks++;
                 _barrier.SignalAndWait();
             }
@@ -68,7 +68,8 @@ namespace DES.ThreadingWork
             }
             else if(_threadId == 0 && posInTextBlock == 0) //need to take prev part of block from prev textBlock
             {
-                return TextBlockOperations.GetPartOfTextBlockWithoutPadding(FileDataLoader.TextBlockSize - CryptConstants.DES_PART_TEXT_BYTES, _copiedPrevCyphredTextBlock);
+                return TextBlockOperations.GetPartOfTextBlockWithoutPadding(
+                    FileDataLoader.TextBlockSize - CryptConstants.DES_PART_TEXT_BYTES, _copiedPrevCyphredTextBlock);
             }
             else // Normal case, need to take prev cypher block
             {
