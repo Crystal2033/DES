@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DES.CypherModes.ModesImplementation
@@ -27,55 +28,34 @@ namespace DES.CypherModes.ModesImplementation
         public override void DecryptWithMode(string fileToDecrypt, string decryptResultFile)
         {
             FileDataLoader loader = new(fileToDecrypt, decryptResultFile);
-            _prevEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
-            _currEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
+            int posInTextBlock;
+            byte[] plainPartOfText;
+            byte[] partOfTextBlock;
+            byte[] prevCypheredPartOfText = _initVector;
+            int realPlainTextPartSize = CryptConstants.DES_PART_TEXT_BYTES;
 
-            if (loader.TextReadSize % 8 != 0)
+            while (loader.FactTextBlockSize != 0)
             {
-                _log.Error($"Text for decryption in {fileToDecrypt} is not compatible. Size % 8 != 0.");
-                loader.CloseStreams();
-                return;
-            }
+                posInTextBlock = 0;
+                while (posInTextBlock < loader.FactTextBlockSize)
+                {
+                    byte[] decryptedPrevCypheredPart = CryptSimpleFunctions.GetBytesAfterCryptOperation(
+                        CryptOperation.ENCRYPT, ref prevCypheredPartOfText, _cryptAlgorithm); // HERE IS REALLY ENCRYPT TO DECRYPT!!!
 
+                    prevCypheredPartOfText = decryptedPrevCypheredPart;
 
-            BaseModeThread[] cfbThreads = new CFBDecryptThread[ThreadsInfo.VALUE_OF_THREAD];
+                    partOfTextBlock = TextBlockOperations.GetPartOfTextBlockWithoutPadding(posInTextBlock, loader.TextBlock);
 
-            Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
-            {
-                _prevEncryptedTextBlock = (byte[])_currEncryptedTextBlock.Clone();
+                    plainPartOfText = CryptSimpleFunctions.XorByteArrays(partOfTextBlock, decryptedPrevCypheredPart);
+                    //CryptSimpleFunctions.GetLettersFromBytes(plainPartOfText);
+                    realPlainTextPartSize = CryptSimpleFunctions.GetPureTextWithoutPaddingSize(ref plainPartOfText, loader);
+
+                    TextBlockOperations.InsertPartInTextBlock(posInTextBlock, plainPartOfText, realPlainTextPartSize, loader);
+
+                    posInTextBlock += realPlainTextPartSize;
+                }
                 loader.reloadTextBlockAndOutputInFile();
-                _currEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
-                for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
-                {
-                    ((CFBDecryptThread)cfbThreads[i]).SetNewPrevAndCurrentCypheredTextBlocks(_prevEncryptedTextBlock, _currEncryptedTextBlock);
-                }
-
-                if (loader.FactTextBlockSize == 0) // There is nothing to read
-                {
-                    for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
-                    {
-                        cfbThreads[i].SetThreadToStartPosition();
-                    }
-                }
-            });
-
-            List<Task> tasks = new List<Task>();
-
-            for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
-            {
-                cfbThreads[i] = new CFBDecryptThread(i, loader, _cryptAlgorithm, barrier, _initVector, _prevEncryptedTextBlock, _currEncryptedTextBlock);
             }
-
-            for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
-            {
-                var task = cfbThreads[i];
-                tasks.Add(Task.Run(() =>
-                {
-                    task.Run(CryptOperation.DECRYPT);
-                }));
-            }
-
-            Task.WaitAll(tasks.ToArray());
             loader.CloseStreams();
         }
 
