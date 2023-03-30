@@ -31,9 +31,9 @@ internal class Program
         AdvancedCypherSym advancedCypherSym = new(mainKey, DES.CypherEnums.CypherMode.CBC, DES.CypherEnums.SymmetricAlgorithm.DES, initVector);
         advancedCypherSym.Encrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\MyFile.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\EncryptModeCBC.txt");
         Console.WriteLine("Encrypt is done");
-        //advancedCypherSym.Decrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\EncryptMode.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\DecryptMode.txt");
+        advancedCypherSym.Decrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\EncryptModeCBC.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\DecryptModeCBC.txt");
         //ThreadBarierTesting testinObj = new();
-        //Task.Run( async () =>
+        //Task.Run(async () =>
         //{
         //    testinObj.test();
         //}).Wait();

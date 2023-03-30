@@ -17,7 +17,8 @@ namespace DES.CypherModes.ModesImplementation
     {
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private byte[] _initVector;
-        private byte[] copiedTextBlockForDecryptParallel;
+        private byte[] _prevEncryptedTextBlock;
+        private byte[] _currEncryptedTextBlock;
         public CBCModeImpl(byte[] mainKey, ISymmetricEncryption algorithm, byte[] initVector) : base(mainKey, algorithm)
         {
             _initVector = initVector;
@@ -26,6 +27,8 @@ namespace DES.CypherModes.ModesImplementation
         public override void DecryptWithMode(string fileToDecrypt, string decryptResultFile)
         {
             FileDataLoader loader = new(fileToDecrypt, decryptResultFile);
+            _prevEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
+            _currEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
 
             if (loader.TextReadSize % 8 != 0)
             {
@@ -33,24 +36,26 @@ namespace DES.CypherModes.ModesImplementation
                 loader.CloseStreams();
                 return;
             }
-            
 
-            CBCDecryptThread[] cbcThreads = new CBCDecryptThread[ThreadsInfo.VALUE_OF_THREAD];
 
-            Console.WriteLine($"Thread is :{Thread.CurrentThread.Name}");
+            BaseModeThread[] cbcThreads = new CBCDecryptThread[ThreadsInfo.VALUE_OF_THREAD];
 
             Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
             {
+                _prevEncryptedTextBlock = (byte[])_currEncryptedTextBlock.Clone();
                 loader.reloadTextBlockAndOutputInFile();
+                _currEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
+                for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
+                {
+                    ((CBCDecryptThread)cbcThreads[i]).SetNewPrevAndCurrentCypheredTextBlocks(_prevEncryptedTextBlock, _currEncryptedTextBlock);
+                }
 
                 if (loader.FactTextBlockSize == 0) // There is nothing to read
                 {
-
                     for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
                     {
-                        cbcThreads[i].BytesTransformed = 0;
+                        cbcThreads[i].SetThreadToStartPosition();
                     }
-                    //Wake up main thread
                 }
             });
 
@@ -58,23 +63,20 @@ namespace DES.CypherModes.ModesImplementation
 
             for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
             {
-                ecbThreads[i] = new ECBThread(loader, _cryptAlgorithm, barrier);
-
+                cbcThreads[i] = new CBCDecryptThread(i, loader, _cryptAlgorithm, barrier, _initVector, _prevEncryptedTextBlock, _currEncryptedTextBlock);
             }
+
             for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
             {
-                var task = ecbThreads[i];
+                var task = cbcThreads[i];
                 tasks.Add(Task.Run(() =>
                 {
-
-                    task.Run(cryptOperation);
+                    task.Run(CryptOperation.DECRYPT);
                 }));
             }
 
             Task.WaitAll(tasks.ToArray());
-            ECBThread.AbsIdProp = 0;
             loader.CloseStreams();
-            throw new NotImplementedException();
         }
 
         public override void EncryptWithMode(string fileToEncrypt, string encryptResultFile)

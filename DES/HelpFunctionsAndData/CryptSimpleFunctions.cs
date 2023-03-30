@@ -152,6 +152,15 @@ namespace DES.HelpFunctions
             }
         }
 
+        public static void GetLettersFromBytes(byte[] bytes)
+        {
+            for(int i = 0; i < bytes.Length; i++)
+            {
+                Console.Write((char)bytes[i]);
+            }
+            Console.WriteLine();
+        }
+
         public static void GetNewPartOfText(in byte[] textInBytes, byte[] buffer, int startIndex)
         {
             int textSizeWithoutBlock = textInBytes.Length - startIndex;

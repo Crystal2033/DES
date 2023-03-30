@@ -23,6 +23,17 @@ namespace DES.HelpFunctionsAndData
             return partOfTextBlock;
         }
 
+        public static byte[] GetPartOfTextBlockWithoutPadding(int posInTextBlock, byte[] textBlock)
+        {
+            byte[] partOfTextBlock = new byte[8];
+            //int readTextSize = (loader.FactTextBlockSize - posInTextBlock < 8) ? loader.FactTextBlockSize - posInTextBlock : partOfTextBlock.Length;
+            for (int i = 0; i < partOfTextBlock.Length; i++)
+            {
+                partOfTextBlock[i] = textBlock[posInTextBlock + i];
+            }
+            return partOfTextBlock;
+        }
+
         public static void InsertPartInTextBlock(int posInTextBlock, byte[] source, int sourceSize, FileDataLoader loader)
         {
             for (int i = 0; i < sourceSize; i++)

@@ -11,25 +11,12 @@ using System.Threading.Tasks;
 
 namespace DES.ThreadingWork
 {
-    public class ECBThread
+    public sealed class ECBThread : BaseModeThread
     {
-        private static int _absID;
-        public static int AbsIdProp { get { return _absID; } set { _absID = value; } }
-        private int _threadId;
-        private Barrier _barrier;
-        private FileDataLoader _loader;
-        private int _bytesTransformed;
-        private ISymmetricEncryption _algorithm;
-        public int BytesTransformed { get => _bytesTransformed; set { _bytesTransformed = value; } }
-        public ECBThread(FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier)
-        {
-            _algorithm = algorithm;
-            _loader = loader;
-            _threadId = _absID++;
-            _barrier = barrier;
-        }   
+        public ECBThread(int id, FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier) : base(id, loader, algorithm, barrier)
+        { }   
 
-        public void Run(object obj)
+        public override void Run(object obj)
         {
             CryptOperation cryptOperation = (CryptOperation)obj;
             int posInTextBlock = _threadId * 8;
@@ -49,10 +36,10 @@ namespace DES.ThreadingWork
 
                     TextBlockOperations.InsertPartInTextBlock(posInTextBlock, newBytes, realCypherPartSize, _loader);
                     
-                    _bytesTransformed++;
-                    posInTextBlock = (_bytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
+                    BytesTransformed++;
+                    posInTextBlock = (BytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
                 }
-                _bytesTransformed = 0;
+                BytesTransformed = 0;
                 posInTextBlock = 0;
                 _barrier.SignalAndWait();
             }
