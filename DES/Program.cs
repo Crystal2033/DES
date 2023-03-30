@@ -28,17 +28,12 @@ internal class Program
         //DemonstrationCypher demo = new DemonstrationCypher(desImpl);
         //demo.encrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\2022-09-06 18-43-02.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4");
         //demo.decrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\decrypt.mp4");
-        AdvancedCypherSym advancedCypherSym = new(mainKey, DES.CypherEnums.CypherMode.CBC, DES.CypherEnums.SymmetricAlgorithm.DES, initVector);
-        advancedCypherSym.Encrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\MyFile.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\EncryptModeCBC.txt");
+        AdvancedCypherSym advancedCypherSym = new(mainKey, DES.CypherEnums.CypherMode.CFB, DES.CypherEnums.SymmetricAlgorithm.DES, initVector);
+        advancedCypherSym.Encrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\MyFile.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\EncryptModeCFB.txt");
         Console.WriteLine("Encrypt is done");
-        advancedCypherSym.Decrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\EncryptModeCBC.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\DecryptModeCBC.txt");
-        //ThreadBarierTesting testinObj = new();
-        //Task.Run(async () =>
-        //{
-        //    testinObj.test();
-        //}).Wait();
+        advancedCypherSym.Decrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\EncryptModeCFB.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\DecryptModeCFB.txt");
         Console.WriteLine("Decrypt is done");
-        
+
 
     }
 }

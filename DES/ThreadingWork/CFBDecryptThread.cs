@@ -10,40 +10,41 @@ using System.Threading.Tasks;
 
 namespace DES.ThreadingWork
 {
-    public sealed class CBCDecryptThread : BaseModeThread
+    public sealed class CFBDecryptThread : BaseModeThread
     {
         private byte[] _initVector;
         private byte[] _copiedPrevCyphredTextBlock;
         private byte[] _copiedCurrCyphredTextBlock;
         private int writtenTextBlocks = 0;
-        public CBCDecryptThread(int id, FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier,
+        public CFBDecryptThread(int id, FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier,
             byte[] initVector, byte[] copiedPrevCyphredTextBlock, byte[] copiedCurrCyphredTextBlock)
             : base(id, loader, algorithm, barrier)
         {
             _initVector = initVector;
-            SetNewPrevAndCurrentCypheredTextBlocks(copiedPrevCyphredTextBlock, copiedCurrCyphredTextBlock);
+            //SetNewPrevAndCurrentCypheredTextBlocks(copiedPrevCyphredTextBlock, copiedCurrCyphredTextBlock);
         }
 
-       
-        public override void Run(object obj=null)
+        public override void Run(object obj = null)
         {
             int posInTextBlock = _threadId * 8;
             int realPlainTextPartSize = CryptConstants.DES_PART_TEXT_BYTES;
             byte[] partOfTextBlock;
             byte[] plainPartOfText;
-            byte[] prevCypheredPartOfText;
+            byte[] prevCypheredPartOfText = _initVector;
+
             while (_loader.FactTextBlockSize != 0)
             {
                 while (posInTextBlock < _loader.FactTextBlockSize)
                 {
+                    byte[] decryptedPrevCypheredPart = CryptSimpleFunctions.GetBytesAfterCryptOperation(
+                        CryptOperation.ENCRYPT, ref prevCypheredPartOfText, _algorithm); // HERE IS REALLY ENCRYPT TO DECRYPT!!!
+
+                    prevCypheredPartOfText = decryptedPrevCypheredPart;
+
                     partOfTextBlock = TextBlockOperations.GetPartOfTextBlockWithoutPadding(posInTextBlock, _loader.TextBlock);
 
-                    byte[] decryptedBytes = CryptSimpleFunctions.GetBytesAfterCryptOperation(CryptOperation.DECRYPT, ref partOfTextBlock, _algorithm);
-                    
-                    prevCypheredPartOfText = GetPrevCypherText(posInTextBlock);
-
-                    plainPartOfText = CryptSimpleFunctions.XorByteArrays(prevCypheredPartOfText, decryptedBytes);
-
+                    plainPartOfText = CryptSimpleFunctions.XorByteArrays(partOfTextBlock, decryptedPrevCypheredPart);
+                    CryptSimpleFunctions.GetLettersFromBytes(plainPartOfText);
                     realPlainTextPartSize = CryptSimpleFunctions.GetPureTextWithoutPaddingSize(ref plainPartOfText, _loader);
 
                     TextBlockOperations.InsertPartInTextBlock(posInTextBlock, plainPartOfText, realPlainTextPartSize, _loader);
@@ -59,29 +60,10 @@ namespace DES.ThreadingWork
             }
         }
 
-        private byte[] GetPrevCypherText(int posInTextBlock)
-        {
-            if(_threadId == 0 && writtenTextBlocks == 0 && posInTextBlock == 0) //its initial case, need to take init vector. The start of decrypting
-            {
-                return _initVector;
-            }
-            else if(_threadId == 0 && posInTextBlock == 0) //need to take prev part of block from prev textBlock
-            {
-                return TextBlockOperations.GetPartOfTextBlockWithoutPadding(
-                    FileDataLoader.TextBlockSize - CryptConstants.DES_PART_TEXT_BYTES, _copiedPrevCyphredTextBlock);
-            }
-            else // Normal case, need to take prev cypher block
-            {
-                return TextBlockOperations.GetPartOfTextBlockWithoutPadding(
-                    posInTextBlock - CryptConstants.DES_PART_TEXT_BYTES, _copiedCurrCyphredTextBlock);
-            }
-        }
-
         public void SetNewPrevAndCurrentCypheredTextBlocks(byte[] copiedPrevCyphredTextBlock, byte[] copiedCurrCyphredTextBlock)
         {
             _copiedPrevCyphredTextBlock = copiedPrevCyphredTextBlock;
             _copiedCurrCyphredTextBlock = copiedCurrCyphredTextBlock;
         }
-
     }
 }
