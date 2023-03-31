@@ -48,11 +48,11 @@ namespace DES.ThreadingWork
 
                     TextBlockOperations.InsertPartInTextBlock(posInTextBlock, plainPartOfText, realPlainTextPartSize, _loader);
 
-                    BytesTransformed++;
-                    posInTextBlock = (BytesTransformed * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
+                    BytesTransformedInBlock++;
+                    posInTextBlock = (BytesTransformedInBlock * ThreadsInfo.VALUE_OF_THREAD + _threadId) * 8;
                 }
 
-                BytesTransformed = 0;
+                BytesTransformedInBlock = 0;
                 posInTextBlock = _threadId * 8;
                 writtenTextBlocks++;
                 _barrier.SignalAndWait();

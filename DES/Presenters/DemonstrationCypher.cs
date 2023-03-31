@@ -29,6 +29,33 @@ namespace DES.Presenters
             return false;
         }
 
+        public static bool CheckFilesEquals(string first, string second)
+        {
+            byte[] buffer1 = new byte[2000];
+            byte[] buffer2 = new byte[2000];
+            using (FileStream mainFileStream = File.OpenRead(first))
+            using (FileStream decryptedFileStream = File.OpenRead(second))
+            {
+                if(mainFileStream.Length != decryptedFileStream.Length)
+                {
+                    return false;
+                }
+                else
+                {
+                    while (mainFileStream.Read(buffer1, 0, buffer1.Length) != 0)
+                    {
+                        decryptedFileStream.Read(buffer2, 0, buffer2.Length);
+                        if(!buffer1.SequenceEqual(buffer2))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                
+            }
+            return true;
+        }
+
         public static void DemonstrateMode(string inFile, string encryptFile, string decryptFile, CypherMode mode, byte[] mainKey, byte[] initVector=null, params object[] optionalParams)
         {
             AdvancedCypherSym advancedCypherSym = new(mainKey, mode, DES.CypherEnums.SymmetricAlgorithm.DES, initVector);
@@ -43,6 +70,21 @@ namespace DES.Presenters
                 advancedCypherSym.Decrypt(encryptFile, decryptFile);
             }).Wait();
             Console.WriteLine($"Decrypt {mode} is done");
+
+            if (!CheckFilesEquals(inFile, decryptFile))
+            {
+                var tmp = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Cyphering failed. Files are not equal!");
+                Console.ForegroundColor = tmp;
+            }
+            else
+            {
+                var tmp = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Success cyphering! Files are equal!");
+                Console.ForegroundColor = tmp;
+            }
         }
         public void encrypt(string userFile, string encryptTo)
         {

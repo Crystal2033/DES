@@ -14,7 +14,8 @@ namespace DES.ThreadingWork
         protected ISymmetricEncryption _algorithm;
         protected Barrier _barrier;
         private int _bytesTransformed;
-        protected int BytesTransformed { get => _bytesTransformed; set { _bytesTransformed = value; } }
+
+        protected int BytesTransformedInBlock { get => _bytesTransformed; set { _bytesTransformed = value; } }
         public BaseModeThread(int id, FileDataLoader loader, ISymmetricEncryption algorithm, Barrier barrier)
         {
             _threadId = id;
@@ -25,7 +26,7 @@ namespace DES.ThreadingWork
 
         public void SetThreadToStartPosition()
         {
-            BytesTransformed = 0;
+            BytesTransformedInBlock = 0;
         }
         public abstract void Run(object obj=null);
     }

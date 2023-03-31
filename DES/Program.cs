@@ -47,6 +47,18 @@ internal class Program
             @"D:\Paul\Programming\C#\DES\DES\TextCheck\OFBEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\OFBDecrypt.txt",
             CypherMode.OFB, mainKey, initVector);
 
+        DemonstrationCypher.DemonstrateMode(@"D:\Paul\Programming\C#\DES\DES\TextCheck\MyFile.txt",
+            @"D:\Paul\Programming\C#\DES\DES\TextCheck\CTREncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\CTRDecrypt.txt",
+            CypherMode.CTR, mainKey, initVector);
+
+        DemonstrationCypher.DemonstrateMode(@"D:\Paul\Programming\C#\DES\DES\TextCheck\MyFile.txt",
+            @"D:\Paul\Programming\C#\DES\DES\TextCheck\RDEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\RDDecrypt.txt",
+            CypherMode.RD, mainKey, initVector);
+
+
+        //long val = BitConverter.ToInt64(initVector);
+        //Console.WriteLine(val);
+        //CryptSimpleFunctions.ShowBinaryView(BitConverter.GetBytes(val));
 
     }
 }

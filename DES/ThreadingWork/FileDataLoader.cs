@@ -30,7 +30,7 @@ namespace DES.ThreadingWork
 			FileStream readFileStream = File.Open(fileReadFrom, FileMode.Open);
 			TextReadSize = readFileStream.Length;
             _fileReadFrom = new BinaryReader(readFileStream, Encoding.UTF8);
-            _fileWriteTo = new BinaryWriter(File.Open(fileWriteTo, FileMode.OpenOrCreate | FileMode.Truncate), Encoding.UTF8);
+            _fileWriteTo = new BinaryWriter(File.Open(fileWriteTo, FileMode.OpenOrCreate), Encoding.UTF8);
 			reloadTextBlockAndOutputInFile();
         }
 

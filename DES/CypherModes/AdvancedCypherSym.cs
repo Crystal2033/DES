@@ -65,9 +65,9 @@ namespace DES.CypherModes
                 case CypherMode.OFB:
                     return new OFBModeImpl(_cypherKey, _cryptAlgorithm, _initVector);
                 case CypherMode.CTR:
-                    return null;
+                    return new RDModeImpl(_cypherKey, _cryptAlgorithm, _initVector);
                 case CypherMode.RD:
-                    return null;
+                    return new RDModeImpl(_cypherKey, _cryptAlgorithm, _initVector, 9); 
                 case CypherMode.RDH:
                     return null;
                 default:
