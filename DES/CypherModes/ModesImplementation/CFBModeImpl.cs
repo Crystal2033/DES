@@ -18,6 +18,8 @@ namespace DES.CypherModes.ModesImplementation
     {
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private byte[] _initVector;
+        private byte[] _prevEncryptedTextBlock;
+        private byte[] _currEncryptedTextBlock;
 
         public CFBModeImpl(byte[] mainKey, ISymmetricEncryption algorithm, byte[] initVector) : base(mainKey, algorithm)
         {
@@ -26,51 +28,59 @@ namespace DES.CypherModes.ModesImplementation
         public override void DecryptWithMode(string fileToDecrypt, string decryptResultFile)
         {
             FileDataLoader loader = new(fileToDecrypt, decryptResultFile);
-            int posInTextBlock;
-            byte[] plainPartOfText;
-            byte[] prevCypheredPartOfText = _initVector;
-            int realPlainTextPartSize = CryptConstants.DES_PART_TEXT_BYTES;
+            _prevEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
+            _currEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
 
-            while (loader.FactTextBlockSize != 0)
+            if (loader.TextReadSize % 8 != 0)
             {
-                posInTextBlock = 0;
-                while (posInTextBlock < loader.FactTextBlockSize)
-                {
-                    plainPartOfText = GetDecryptValue(prevCypheredPartOfText, loader, posInTextBlock, out prevCypheredPartOfText);
-
-                    realPlainTextPartSize = CryptSimpleFunctions.GetPureTextWithoutPaddingSize(ref plainPartOfText, loader);
-                    TextBlockOperations.InsertPartInTextBlock(posInTextBlock, plainPartOfText, realPlainTextPartSize, loader);
-                    posInTextBlock += realPlainTextPartSize;
-                }
-                loader.reloadTextBlockAndOutputInFile();
+                _log.Error($"Text for decryption in {fileToDecrypt} is not compatible. Size % 8 != 0.");
+                loader.CloseStreams();
+                return;
             }
+
+
+            BaseModeThread[] cfbThreads = new CFBDecryptThread[ThreadsInfo.VALUE_OF_THREAD];
+
+            Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
+            {
+                _prevEncryptedTextBlock = (byte[])_currEncryptedTextBlock.Clone();
+                loader.reloadTextBlockAndOutputInFile();
+                _currEncryptedTextBlock = (byte[])loader.TextBlock.Clone();
+                for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
+                {
+                    ((CFBDecryptThread)cfbThreads[i]).SetNewPrevAndCurrentCypheredTextBlocks(_prevEncryptedTextBlock, _currEncryptedTextBlock);
+                }
+
+                if (loader.FactTextBlockSize == 0) // There is nothing to read
+                {
+                    for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
+                    {
+                        cfbThreads[i].SetThreadToStartPosition();
+                    }
+                }
+            });
+
+            List<Task> tasks = new List<Task>();
+
+            for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
+            {
+                cfbThreads[i] = new CFBDecryptThread(i, loader, _cryptAlgorithm, barrier, _initVector, _prevEncryptedTextBlock, _currEncryptedTextBlock);
+            }
+
+            for (int i = 0; i < ThreadsInfo.VALUE_OF_THREAD; i++)
+            {
+                var task = cfbThreads[i];
+                tasks.Add(Task.Run(() =>
+                {
+                    task.Run(CryptOperation.DECRYPT);
+                }));
+            }
+
+            Task.WaitAll(tasks.ToArray());
             loader.CloseStreams();
+
         }
 
-        private byte[] GetEncryptValue(byte[] bytesToCrypt, FileDataLoader loader, int curPosInText)
-        {
-            byte[] cryptedInitValue;
-            byte[] partOfTextBlock;
-
-            cryptedInitValue = CryptSimpleFunctions.GetBytesAfterCryptOperation(CypherEnums.CryptOperation.ENCRYPT, ref bytesToCrypt, _cryptAlgorithm);
-            
-            partOfTextBlock = TextBlockOperations.GetPartOfTextBlock(curPosInText, loader);
-
-            return CryptSimpleFunctions.XorByteArrays(partOfTextBlock, cryptedInitValue);
-        }
-
-        private byte[] GetDecryptValue(byte[] bytesToCrypt, FileDataLoader loader, int curPosInText, out byte[] prevCypheredPartOfText)
-        {
-            byte[] cryptedInitValue;
-            byte[] cryptedPartOfText;
-
-            cryptedInitValue = CryptSimpleFunctions.GetBytesAfterCryptOperation(CypherEnums.CryptOperation.ENCRYPT, ref bytesToCrypt, _cryptAlgorithm);
-
-            cryptedPartOfText = TextBlockOperations.GetPartOfTextBlock(curPosInText, loader);
-            prevCypheredPartOfText = (byte[])cryptedPartOfText.Clone();
-
-            return CryptSimpleFunctions.XorByteArrays(cryptedPartOfText, cryptedInitValue);
-        }
         public override void EncryptWithMode(string fileToEncrypt, string encryptResultFile)
         {
             FileDataLoader loader = new(fileToEncrypt, encryptResultFile);
@@ -91,5 +101,18 @@ namespace DES.CypherModes.ModesImplementation
             }
             loader.CloseStreams();
         }
+
+        private byte[] GetEncryptValue(byte[] bytesToCrypt, FileDataLoader loader, int curPosInText)
+        {
+            byte[] cryptedInitValue;
+            byte[] partOfTextBlock;
+
+            cryptedInitValue = CryptSimpleFunctions.GetBytesAfterCryptOperation(CypherEnums.CryptOperation.ENCRYPT, ref bytesToCrypt, _cryptAlgorithm);
+            
+            partOfTextBlock = TextBlockOperations.GetPartOfTextBlock(curPosInText, loader);
+
+            return CryptSimpleFunctions.XorByteArrays(partOfTextBlock, cryptedInitValue);
+        }
+        
     }
 }
