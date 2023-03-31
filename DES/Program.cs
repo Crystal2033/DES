@@ -55,6 +55,10 @@ internal class Program
             @"D:\Paul\Programming\C#\DES\DES\TextCheck\RDEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\RDDecrypt.txt",
             CypherMode.RD, mainKey, initVector);
 
+        DemonstrationCypher.DemonstrateMode(@"D:\Paul\Programming\C#\DES\DES\TextCheck\MyFile.txt",
+            @"D:\Paul\Programming\C#\DES\DES\TextCheck\RDHEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\RDHDecrypt.txt",
+            CypherMode.RDH, mainKey, initVector);
+
 
         //long val = BitConverter.ToInt64(initVector);
         //Console.WriteLine(val);

@@ -1,4 +1,5 @@
 ﻿using DES.CypherEnums;
+using DES.HelpFunctions;
 using DES.InterfacesDES;
 using DES.ThreadingWork;
 using log4net;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +18,15 @@ namespace DES.CypherModes.ModesImplementation
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private byte[] _initVector;
         private int _delta;
+        private byte[] _hash;
+        public byte[] HashCode { 
+                get => _hash;
+                init
+                {
+                    _hash = CryptSimpleFunctions.XorByteArrays(value, _initVector);
+                }
+            }
+
         public RDModeImpl(byte[] mainKey, ISymmetricEncryption algorithm, byte[] initVector, int delta=1) : base(mainKey, algorithm)
         {
             _initVector = initVector;
@@ -25,8 +36,6 @@ namespace DES.CypherModes.ModesImplementation
         {
             Execute(fileToDecrypt, decryptResultFile, CryptOperation.DECRYPT);
         }
-
-        
 
         public override void EncryptWithMode(string fileToEncrypt, string encryptResultFile)
         {

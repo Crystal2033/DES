@@ -69,7 +69,8 @@ namespace DES.CypherModes
                 case CypherMode.RD:
                     return new RDModeImpl(_cypherKey, _cryptAlgorithm, _initVector, 9); 
                 case CypherMode.RDH:
-                    return null;
+                    byte[] hashCode = new byte[8] { 102,22,32,44,251,63,74,85};
+                    return new RDModeImpl(_cypherKey, _cryptAlgorithm, _initVector, 23) { HashCode=hashCode};
                 default:
                     return null;
             }
