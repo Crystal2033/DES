@@ -63,7 +63,7 @@ namespace DES.CypherModes
                 case CypherMode.CFB:
                     return new CFBModeImpl(_cypherKey, _cryptAlgorithm, _initVector);
                 case CypherMode.OFB:
-                    return null;
+                    return new OFBModeImpl(_cypherKey, _cryptAlgorithm, _initVector);
                 case CypherMode.CTR:
                     return null;
                 case CypherMode.RD:

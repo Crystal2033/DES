@@ -1,4 +1,6 @@
-﻿using DES.HelpFunctions;
+﻿using DES.CypherEnums;
+using DES.CypherModes;
+using DES.HelpFunctions;
 using DES.HelpFunctionsAndData;
 using DES.InterfacesDES;
 using log4net;
@@ -27,6 +29,21 @@ namespace DES.Presenters
             return false;
         }
 
+        public static void DemonstrateMode(string inFile, string encryptFile, string decryptFile, CypherMode mode, byte[] mainKey, byte[] initVector=null, params object[] optionalParams)
+        {
+            AdvancedCypherSym advancedCypherSym = new(mainKey, mode, DES.CypherEnums.SymmetricAlgorithm.DES, initVector);
+            Task.Run(() =>
+            {
+                advancedCypherSym.Encrypt(inFile, encryptFile);
+            }).Wait();
+            Console.WriteLine($"Encrypt {mode} is done");
+
+            Task.Run(() =>
+            {
+                advancedCypherSym.Decrypt(encryptFile, decryptFile);
+            }).Wait();
+            Console.WriteLine($"Decrypt {mode} is done");
+        }
         public void encrypt(string userFile, string encryptTo)
         {
             try

@@ -26,10 +26,7 @@ namespace DES.CypherModes.ModesImplementation
 
         public override void EncryptWithMode(string fileToEncrypt, string encryptResultFile)
         {
-            Task.Run(() => {
-                Execute(fileToEncrypt, encryptResultFile, CryptOperation.ENCRYPT);
-            }).Wait();
-            Console.WriteLine("Cyphering is ended");
+            Execute(fileToEncrypt, encryptResultFile, CryptOperation.ENCRYPT);
         }
 
         private void Execute(string inputFile, string outputFile, CryptOperation cryptOperation)
@@ -46,7 +43,7 @@ namespace DES.CypherModes.ModesImplementation
             }
 
             BaseModeThread[] ecbThreads = new ECBThread[ThreadsInfo.VALUE_OF_THREAD];
-            Console.WriteLine($"Thread is :{Thread.CurrentThread.Name}");
+            
 
             Barrier barrier = new Barrier(ThreadsInfo.VALUE_OF_THREAD, (bar) =>
             {

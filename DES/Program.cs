@@ -1,4 +1,5 @@
 ﻿using DES;
+using DES.CypherEnums;
 using DES.CypherModes;
 using DES.FeistelImplementation;
 using DES.HelpFunctions;
@@ -28,11 +29,23 @@ internal class Program
         //DemonstrationCypher demo = new DemonstrationCypher(desImpl);
         //demo.encrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\2022-09-06 18-43-02.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4");
         //demo.decrypt(@"D:\Paul\Programming\C#\DES\DES\Videos\encrypt.mp4", @"D:\Paul\Programming\C#\DES\DES\Videos\decrypt.mp4");
-        AdvancedCypherSym advancedCypherSym = new(mainKey, DES.CypherEnums.CypherMode.CFB, DES.CypherEnums.SymmetricAlgorithm.DES, initVector);
-        advancedCypherSym.Encrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\MyFile.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\EncryptModeCFB.txt");
-        Console.WriteLine("Encrypt is done");
-        advancedCypherSym.Decrypt(@"D:\Paul\Programming\C#\\DES\DES\TextCheck\EncryptModeCFB.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\DecryptModeCFB.txt");
-        Console.WriteLine("Decrypt is done");
+
+
+        DemonstrationCypher.DemonstrateMode(@"D:\Paul\Programming\C#\DES\DES\TextCheck\MyFile.txt",
+            @"D:\Paul\Programming\C#\DES\DES\TextCheck\ECBEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\ECBDecrypt.txt",
+            CypherMode.ECB, mainKey);
+
+        DemonstrationCypher.DemonstrateMode(@"D:\Paul\Programming\C#\DES\DES\TextCheck\MyFile.txt",
+            @"D:\Paul\Programming\C#\DES\DES\TextCheck\CBCEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\CBCDecrypt.txt",
+            CypherMode.CBC, mainKey, initVector);
+
+        DemonstrationCypher.DemonstrateMode(@"D:\Paul\Programming\C#\DES\DES\TextCheck\MyFile.txt",
+            @"D:\Paul\Programming\C#\DES\DES\TextCheck\CFBEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\CFBDecrypt.txt",
+            CypherMode.CFB, mainKey, initVector);
+
+        DemonstrationCypher.DemonstrateMode(@"D:\Paul\Programming\C#\DES\DES\TextCheck\MyFile.txt",
+            @"D:\Paul\Programming\C#\DES\DES\TextCheck\OFBEncrypt.txt", @"D:\Paul\Programming\C#\DES\DES\TextCheck\OFBDecrypt.txt",
+            CypherMode.OFB, mainKey, initVector);
 
 
     }
