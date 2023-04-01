@@ -42,9 +42,32 @@ namespace DES.CypherModes.ModesImplementation
             Execute(fileToEncrypt, encryptResultFile, CryptOperation.ENCRYPT);
         }
 
+        public void InsertHashInFile(FileDataLoader loader)
+        {
+            loader.InsertHashValue(BitConverter.ToInt64(_hash));
+        }
+
+        public long GetHashFromFile(FileDataLoader loader)
+        {
+            return loader.GetHashValue();
+        }
+
         private void Execute(string inputFile, string outputFile, CryptOperation cryptOperation)
         {
             FileDataLoader loader = new(inputFile, outputFile);
+            long hashCode = 0;
+            if(_hash != null)
+            {
+                //if (cryptOperation == CryptOperation.ENCRYPT)
+                //{
+                //    InsertHashInFile(loader);
+                //}
+                //else
+                //{
+                //    hashCode = GetHashFromFile(loader);
+                //}
+            }
+
             if (cryptOperation == CryptOperation.DECRYPT)
             {
                 if (loader.TextReadSize % 8 != 0)

@@ -30,11 +30,30 @@ namespace DES.ThreadingWork
 			FileStream readFileStream = File.Open(fileReadFrom, FileMode.Open);
 			TextReadSize = readFileStream.Length;
             _fileReadFrom = new BinaryReader(readFileStream, Encoding.UTF8);
-            _fileWriteTo = new BinaryWriter(File.Open(fileWriteTo, FileMode.OpenOrCreate), Encoding.UTF8);
-			reloadTextBlockAndOutputInFile();
+
+			if (File.Exists(fileWriteTo))
+			{
+                _fileWriteTo = new BinaryWriter(File.Open(fileWriteTo, FileMode.Truncate), Encoding.UTF8);
+            }
+			else
+			{
+                _fileWriteTo = new BinaryWriter(File.Open(fileWriteTo, FileMode.OpenOrCreate), Encoding.UTF8);
+            }
+            
+
+            reloadTextBlockAndOutputInFile();
         }
 
-		public void reloadTextBlockAndOutputInFile() 
+		public void InsertHashValue(long hashValue)
+		{
+			_fileWriteTo.Write(hashValue);
+		}
+
+        public long GetHashValue()
+        {
+			return _fileReadFrom.ReadInt64();
+        }
+        public void reloadTextBlockAndOutputInFile() 
 		{
 			if(currentPosInFile != 0)
 			{
